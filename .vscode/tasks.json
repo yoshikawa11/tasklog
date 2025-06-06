@@ -5,7 +5,9 @@
 			"type": "deno",
 			"command": "task",
 			"args": [
-				"dev"
+				"dev",
+				"--allow-read",
+				"--allow-write",
 			],
 			"problemMatcher": [
 				"$deno"

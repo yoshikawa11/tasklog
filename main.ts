@@ -1,8 +1,9 @@
 import { parseArgs } from "https://deno.land/std@0.224.0/cli/parse_args.ts";
+import { add } from "./commands/add.ts";
 
 interface Args {
   _: (string | number)[];
-  [key: string]: unknown;
+  [key: string]: unknown; // 名前付きオプション引数
 }
 
 const args: Args = parseArgs(Deno.args);
@@ -11,14 +12,32 @@ const args: Args = parseArgs(Deno.args);
 const command = args._[0];
 
 switch (command) {
-  case "add":
-    // import("./commands/add.ts") などで動的にロード予定
-    console.log("addコマンドが呼び出されました");
-
+  case "add": {
+    const title = String(args._[1]); // それぞれの型を明示する
+    const plannedMinutes = args._[2] ? Number(args._[2]) : null;
+    if (!title) {
+      console.error("タイトルを指定してください");
+      Deno.exit(1);
+    }
+    if (
+      plannedMinutes !== null && isNaN(plannedMinutes) && plannedMinutes <= 0
+    ) {
+      console.error("予定時間は数値で指定してください");
+      Deno.exit(1);
+    }
+    await add(
+      title,
+      plannedMinutes,
+    ).catch((err) => {
+      console.error("タスク追加中にエラーが発生しました:", err);
+    });
     break;
-  case "list":
+  }
+  case "list": {
     break;
+  }
   // 他のコマンドも同様に追加
-  default:
+  default: {
     console.log("未対応のコマンドです");
+  }
 }
