@@ -14,6 +14,7 @@ switch (command) {
   case "add":
     // import("./commands/add.ts") などで動的にロード予定
     console.log("addコマンドが呼び出されました");
+
     break;
   case "list":
     break;
@@ -21,4 +22,3 @@ switch (command) {
   default:
     console.log("未対応のコマンドです");
 }
-

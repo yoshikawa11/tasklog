@@ -1,0 +1,11 @@
+{
+    "deno.enable": true,
+    "editor.formatOnSave": true,
+    "[markdown]": {
+    "editor.formatOnSave": false // Markdownをフォーマットから除外(好みで)
+  },
+   "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno",
+    "editor.tabSize": 2 // インデントサイズは好みで
+  }
+}

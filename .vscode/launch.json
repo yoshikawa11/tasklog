@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Deno via Task",
+      "type": "pwa-node",
+      "request": "launch",
+      "preLaunchTask": "deno: run current file",
+      "program": "${file}",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "deno",
+      "runtimeArgs": [
+        "run",
+        //"--inspect-brk", --inspect-brkがあるとデバッガーが起動しない
+        //"--allow-read"
+      ],
+      "console": "internalConsole",
+      "internalConsoleOptions": "neverOpen"
+    }
+  ]
+}
