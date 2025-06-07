@@ -1,5 +1,6 @@
 import { parseArgs } from "https://deno.land/std@0.224.0/cli/parse_args.ts";
 import { add } from "./commands/add.ts";
+import { dataFilePath } from "./utils/const.ts";
 
 interface Args {
   _: (string | number)[];
@@ -28,6 +29,7 @@ switch (command) {
     await add(
       title,
       plannedMinutes,
+      dataFilePath,
     ).catch((err) => {
       console.error("タスク追加中にエラーが発生しました:", err);
     });
