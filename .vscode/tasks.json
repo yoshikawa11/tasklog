@@ -28,6 +28,20 @@
 			],
 			"label": "deno: run current file",
 			"detail": "$ deno run --allow-read --allow-write ${file}"
+		},
+				{
+			"type": "deno",
+			"command": "test",
+			"args": [
+				"--allow-read",
+				"--allow-write",
+				"${file}"
+			],
+			"problemMatcher": [
+				"$deno"
+			],
+			"label": "deno: test current file",
+			"detail": "$ deno test --allow-read --allow-write ${file}"
 		}
 	]
 }

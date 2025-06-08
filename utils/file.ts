@@ -1,3 +1,5 @@
+import { Task } from "../types/task.ts";
+
 export async function ensureDataFile(filePath: string, defaultContent: string) {
   // ファイル存在チェック＆初期化
   try {
@@ -9,4 +11,8 @@ export async function ensureDataFile(filePath: string, defaultContent: string) {
       throw err;
     }
   }
+}
+
+export async function writeTasksToFile(filePath: string, tasks: Task[]) {
+  await Deno.writeTextFile(filePath, JSON.stringify(tasks, null, 2));
 }

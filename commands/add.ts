@@ -1,5 +1,5 @@
 import { Task } from "../types/task.ts";
-import { ensureDataFile } from "../utils/file.ts";
+import { ensureDataFile, writeTasksToFile } from "../utils/file.ts";
 import { createTask } from "../utils/taskFactory.ts";
 
 export async function add(
@@ -23,7 +23,7 @@ export async function add(
   const tasks: Task[] = JSON.parse(data);
   const newTask = createTask(title, plannedMinutes);
   tasks.push(newTask);
-  await Deno.writeTextFile(filePath, JSON.stringify(tasks, null, 2));
+  await writeTasksToFile(filePath, tasks);
 
   // TODO: logger.ts でログ記録を追加
 }
