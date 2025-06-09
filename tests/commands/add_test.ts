@@ -5,6 +5,7 @@ import { ensureDataFile } from "../../utils/file.ts";
 
 // テスト用のデータファイルパス
 const testDataFilePath = "./tests/commands/test_tasks.json";
+const testEventLogFilePath = "./tests/commands/test_eventLog.jsonl";
 
 Deno.test("add: 新しいタスクが正常に追加される", async () => {
   // 前準備: テスト用ファイルを空配列で初期化
@@ -13,7 +14,7 @@ Deno.test("add: 新しいタスクが正常に追加される", async () => {
   const title = "テストタスク";
   const plannedMinutes = 30;
 
-  await add(title, plannedMinutes, testDataFilePath);
+  await add(title, plannedMinutes, testDataFilePath, testEventLogFilePath);
 
   // ファイルからデータを読み込んで検証
   const data = await Deno.readTextFile(testDataFilePath);
@@ -25,4 +26,5 @@ Deno.test("add: 新しいタスクが正常に追加される", async () => {
 
   // 後片付け: テスト用ファイルを削除
   await Deno.remove(testDataFilePath);
+  await Deno.remove(testEventLogFilePath);
 });
