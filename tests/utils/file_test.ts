@@ -1,5 +1,9 @@
 import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
-import { ensureDataFile, writeTasksToFile } from "../../utils/file.ts";
+import {
+  ensureDataFile,
+  readTasksFromFile,
+  writeTasksToFile,
+} from "../../utils/file.ts";
 import { Task } from "../../types/task.ts";
 
 const testFilePath = "./tests/utils/test_tasks.json";
@@ -60,4 +64,37 @@ Deno.test("writeTasksToFile: タスク配列が正しく書き込まれる", asy
 
   // 後片付け
   await Deno.remove(testFilePath);
+});
+
+Deno.test("readTasksFromFile: タスク配列が正しく読み込まれる", async () => {
+  const tasks: Task[] = [
+    {
+      id: "1",
+      title: "read test",
+      createdAt: "2025-06-10T10:00:00.000Z",
+      plannedMinutes: 45,
+      actualMinutes: null,
+      status: "pending",
+    },
+  ];
+  await writeTasksToFile(testFilePath, tasks);
+
+  const result = await readTasksFromFile(testFilePath);
+  assertEquals(result.length, 1);
+  assertEquals(result[0].title, "read test");
+
+  // 後片付け
+  await Deno.remove(testFilePath);
+});
+
+Deno.test("readTasksFromFile: ファイルが存在しない場合は空配列を返す", async () => {
+  // 念のためファイルを削除
+  try {
+    await Deno.remove(testFilePath);
+  } catch (_) {
+    // do nothing if file does not exist
+  }
+
+  const result = await readTasksFromFile(testFilePath);
+  assertEquals(result, []);
 });

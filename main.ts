@@ -1,5 +1,6 @@
 import { parseArgs } from "https://deno.land/std@0.224.0/cli/parse_args.ts";
 import { add } from "./commands/add.ts";
+import { listTasks } from "./commands/list.ts";
 import { dataFilePath, eventLogPath } from "./utils/const.ts";
 
 interface Args {
@@ -37,6 +38,7 @@ switch (command) {
     break;
   }
   case "list": {
+    await listTasks(dataFilePath);
     break;
   }
   // 他のコマンドも同様に追加

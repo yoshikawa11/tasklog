@@ -1,5 +1,5 @@
 {
-  "version": "4",
+  "version": "5",
   "specifiers": {
     "jsr:@std/assert@1": "1.0.13",
     "jsr:@std/internal@^1.0.6": "1.0.8"
@@ -14,6 +14,13 @@
     "@std/internal@1.0.8": {
       "integrity": "fc66e846d8d38a47cffd274d80d2ca3f0de71040f855783724bb6b87f60891f5"
     }
+  },
+  "redirects": {
+    "https://esm.sh/ansi-regex@^6.0.1?target=denonext": "https://esm.sh/ansi-regex@6.1.0?target=denonext",
+    "https://esm.sh/emoji-regex@^10.3.0?target=denonext": "https://esm.sh/emoji-regex@10.4.0?target=denonext",
+    "https://esm.sh/get-east-asian-width@^1.0.0?target=denonext": "https://esm.sh/get-east-asian-width@1.3.0?target=denonext",
+    "https://esm.sh/string-width@7": "https://esm.sh/string-width@7.2.0",
+    "https://esm.sh/strip-ansi@^7.1.0?target=denonext": "https://esm.sh/strip-ansi@7.1.0?target=denonext"
   },
   "remote": {
     "https://deno.land/std@0.224.0/assert/_constants.ts": "a271e8ef5a573f1df8e822a6eb9d09df064ad66a4390f21b3e31f820a38e0975",
@@ -50,7 +57,17 @@
     "https://deno.land/std@0.224.0/fmt/colors.ts": "508563c0659dd7198ba4bbf87e97f654af3c34eb56ba790260f252ad8012e1c5",
     "https://deno.land/std@0.224.0/internal/diff.ts": "6234a4b493ebe65dc67a18a0eb97ef683626a1166a1906232ce186ae9f65f4e6",
     "https://deno.land/std@0.224.0/internal/format.ts": "0a98ee226fd3d43450245b1844b47003419d34d210fa989900861c79820d21c2",
-    "https://deno.land/std@0.224.0/internal/mod.ts": "534125398c8e7426183e12dc255bb635d94e06d0f93c60a297723abe69d3b22e"
+    "https://deno.land/std@0.224.0/internal/mod.ts": "534125398c8e7426183e12dc255bb635d94e06d0f93c60a297723abe69d3b22e",
+    "https://esm.sh/ansi-regex@6.1.0/denonext/ansi-regex.mjs": "543ae624eafbe20ac79a4e437626038f3c666058c04668549ad282938342a4c7",
+    "https://esm.sh/ansi-regex@6.1.0?target=denonext": "b55837b45f9bd42be731cc15f39c13103eb522fb5bb92c5a09543c0f52d9d5b9",
+    "https://esm.sh/emoji-regex@10.4.0/denonext/emoji-regex.mjs": "7e89c53d8651a966f77c1901971efc9dc108ac39d0a30f5254079330c9b46920",
+    "https://esm.sh/emoji-regex@10.4.0?target=denonext": "d69f33ab60bfa309f95861ee5279a2501237c80da122fd91b826ec8101b29d8d",
+    "https://esm.sh/get-east-asian-width@1.3.0/denonext/get-east-asian-width.mjs": "577a7183ee11745f334262c43e894b1b8e6ddea26f988dcdeeda7e6dc7717faa",
+    "https://esm.sh/get-east-asian-width@1.3.0?target=denonext": "01d9fbb4dfbec02abd03bf63d09f1f0d65d25cf33ea27e16a74ce54234a4a884",
+    "https://esm.sh/string-width@7.2.0": "288b87103bb29550239fb06990b1a8081101083e1f5715b28ce93efc4b8f732a",
+    "https://esm.sh/string-width@7.2.0/denonext/string-width.mjs": "329caba194cd7e62a0d893c070d9a88bbc5123e70e7d4076dbf6b0e4a7b925ce",
+    "https://esm.sh/strip-ansi@7.1.0/denonext/strip-ansi.mjs": "125b91ddc1ed96ba318e29930a14192a66fd1b7b54f7694f119c3e4128299c17",
+    "https://esm.sh/strip-ansi@7.1.0?target=denonext": "5fb6439a60f4d6b9673a8ab122dddde201e3d676d97874ea9e7428b4bb9f6e2e"
   },
   "workspace": {
     "dependencies": [
