@@ -3,6 +3,7 @@ import { ensureDataFile, writeTasksToFile } from "../utils/file.ts";
 import { createTask } from "../utils/taskFactory.ts";
 import { createTaskAddEvent } from "../utils/eventLogFactory.ts";
 import { saveLogEvent } from "../utils/logger.ts";
+import { defaultDataFileContent } from "../utils/const.ts";
 
 export async function add(
   title: string,
@@ -10,14 +11,14 @@ export async function add(
   dataFilePath: string,
   eventLogPath: string,
 ): Promise<void> {
-  await ensureDataFile(dataFilePath, "[]");
+  await ensureDataFile(dataFilePath, defaultDataFileContent);
 
   let data: string;
   try {
     data = await Deno.readTextFile(dataFilePath);
   } catch (err) {
     if (err instanceof Deno.errors.NotFound) {
-      data = "[]";
+      data = defaultDataFileContent;
     } else {
       throw err;
     }
@@ -26,7 +27,7 @@ export async function add(
   const tasks: Task[] = JSON.parse(data);
   const newTask = createTask(title, plannedMinutes);
   tasks.push(newTask);
-  await writeTasksToFile(dataFilePath, tasks);
+  await writeTasksToFile(dataFilePath, tasks, defaultDataFileContent);
 
   // TODO: logger.ts でログ記録を追加
   await ensureDataFile(eventLogPath, "");

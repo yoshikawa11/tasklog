@@ -13,7 +13,12 @@ export async function ensureDataFile(filePath: string, defaultContent: string) {
   }
 }
 
-export async function writeTasksToFile(filePath: string, tasks: Task[]) {
+export async function writeTasksToFile(
+  filePath: string,
+  tasks: Task[],
+  defaultContent: string,
+) {
+  await ensureDataFile(filePath, defaultContent);
   await Deno.writeTextFile(filePath, JSON.stringify(tasks, null, 2));
 }
 

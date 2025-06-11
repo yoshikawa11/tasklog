@@ -7,6 +7,7 @@ import {
 import { Task } from "../../types/task.ts";
 
 const testFilePath = "./tests/utils/test_tasks.json";
+const defaultContent = "[]";
 
 Deno.test("ensureDataFile: ファイルが存在しない場合、初期化される", async () => {
   // 事前にファイルを削除
@@ -16,7 +17,7 @@ Deno.test("ensureDataFile: ファイルが存在しない場合、初期化さ�
     // donothing if file does not exist
   }
 
-  await ensureDataFile(testFilePath, "[]");
+  await ensureDataFile(testFilePath, defaultContent);
   const content = await Deno.readTextFile(testFilePath);
   assertEquals(content, "[]");
 
@@ -26,7 +27,7 @@ Deno.test("ensureDataFile: ファイルが存在しない場合、初期化さ�
 
 Deno.test("ensureDataFile: ファイルが存在する場合、内容は変更されない", async () => {
   await Deno.writeTextFile(testFilePath, '[{"title":"test"}]');
-  await ensureDataFile(testFilePath, "[]");
+  await ensureDataFile(testFilePath, defaultContent);
   const content = await Deno.readTextFile(testFilePath);
   assertEquals(content, '[{"title":"test"}]');
 
@@ -54,7 +55,7 @@ Deno.test("writeTasksToFile: タスク配列が正しく書き込まれる", asy
     },
   ];
 
-  await writeTasksToFile(testFilePath, tasks);
+  await writeTasksToFile(testFilePath, tasks, defaultContent);
   const content = await Deno.readTextFile(testFilePath);
   const parsed: Task[] = JSON.parse(content);
 
@@ -77,7 +78,7 @@ Deno.test("readTasksFromFile: タスク配列が正しく読み込まれる", as
       status: "pending",
     },
   ];
-  await writeTasksToFile(testFilePath, tasks);
+  await writeTasksToFile(testFilePath, tasks, "[]");
 
   const result = await readTasksFromFile(testFilePath);
   assertEquals(result.length, 1);
