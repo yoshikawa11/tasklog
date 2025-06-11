@@ -12,3 +12,11 @@ export function createTaskAddEvent(task: Task): EventLog {
     },
   };
 }
+
+export function createTaskDoneEvent(task: Task): EventLog {
+  return {
+    timestamp: new Date().toISOString(),
+    type: "task:completed",
+    taskId: task.id,
+  };
+}
