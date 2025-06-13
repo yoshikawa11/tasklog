@@ -2,7 +2,8 @@ import { parseArgs } from "https://deno.land/std@0.224.0/cli/parse_args.ts";
 import { add } from "./commands/add.ts";
 import { doneTask } from "./commands/done.ts";
 import { listTasks } from "./commands/list.ts";
-import { dataFilePath, eventLogPath } from "./utils/const.ts";
+import { startTask } from "./commands/start.ts";
+import { dataFilePath, eventLogPath, timeLogPath } from "./utils/const.ts";
 
 interface Args {
   _: (string | number)[];
@@ -49,6 +50,17 @@ switch (command) {
       eventLogPath,
     ).catch((err) => {
       console.error("タスク完了中にエラーが発生しました:", err);
+    });
+    break;
+  }
+  case "start": {
+    await startTask(
+      String(args._[1]), // タスクIDを文字列として取得
+      dataFilePath,
+      eventLogPath,
+      timeLogPath,
+    ).catch((err) => {
+      console.error("タスク開始中にエラーが発生しました:", err);
     });
     break;
   }

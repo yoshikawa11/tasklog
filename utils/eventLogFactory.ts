@@ -20,3 +20,17 @@ export function createTaskDoneEvent(task: Task): EventLog {
     taskId: task.id,
   };
 }
+
+export function createTaskStartEvent(
+  task: Task,
+  startTime: string,
+): EventLog {
+  return {
+    timestamp: new Date().toISOString(),
+    type: "task:start",
+    taskId: task.id,
+    payload: {
+      startTime: startTime,
+    },
+  };
+}
