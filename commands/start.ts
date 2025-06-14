@@ -2,6 +2,7 @@ import { readTasksFromFile, writeTasksToFile } from "../utils/file.ts";
 import { Task } from "../types/task.ts";
 import { createTaskStartEvent } from "../utils/eventLogFactory.ts";
 import { saveLogEvent } from "../utils/logger.ts";
+import { saveTimeLog } from "../utils/timeLogger.ts";
 
 export async function startTask(
   taskId: string,
@@ -41,5 +42,10 @@ export async function startTask(
   await saveLogEvent(eventLogPath, event);
 
   // タイムログの保存
-  await saveTimeLog(timeLogPath, task.id, startTime);
+  const timeLog = {
+    event: "task:start",
+    taskId: taskId,
+    timestamp: startTime,
+  };
+  await saveTimeLog(timeLogPath, timeLog);
 }
