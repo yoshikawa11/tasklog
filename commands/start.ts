@@ -43,7 +43,7 @@ export async function startTask(
 
   // タイムログの保存
   const timeLog = {
-    event: "task:start",
+    event: "start",
     taskId: taskId,
     timestamp: startTime,
   };
