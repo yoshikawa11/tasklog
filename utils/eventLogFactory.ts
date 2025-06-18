@@ -34,3 +34,17 @@ export function createTaskStartEvent(
     },
   };
 }
+
+export function createTaskStopEvent(
+  task: Task,
+  stopTime: string,
+): EventLog {
+  return {
+    timestamp: new Date().toISOString(),
+    type: "task:stop",
+    taskId: task.id,
+    payload: {
+      stopTime: stopTime,
+    },
+  };
+}

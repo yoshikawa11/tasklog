@@ -1,6 +1,6 @@
 import { readTasksFromFile, writeTasksToFile } from "../utils/file.ts";
 import { Task } from "../types/task.ts";
-import { createTaskStartEvent } from "../utils/eventLogFactory.ts";
+import { createTaskStopEvent } from "../utils/eventLogFactory.ts";
 import { saveLogEvent } from "../utils/logger.ts";
 import { saveTimeLog } from "../utils/timeLogger.ts";
 import { findTaskById } from "../utils/taskUtils.ts";
@@ -20,11 +20,11 @@ export async function stopTask(
   task.status = "completed";
 
   // タイムログを記録
-  const startTime = new Date().toISOString();
+  const stopTime = new Date().toISOString();
 
   await writeTasksToFile(dataFilePath, tasks, "[]");
 
-  const event = createTaskStartEvent(task, startTime);
+  const event = createTaskStopEvent(task, stopTime);
   await saveLogEvent(eventLogPath, event);
 
   // タイムログの保存

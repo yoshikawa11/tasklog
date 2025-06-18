@@ -15,6 +15,7 @@ export async function doneTask(
 
   // todo: 実際の時間を計測して値を設定する
   task.status = "completed";
+  task.actualMinutes = 0;
   await writeTasksToFile(dataFilePath, tasks, "[]");
 
   const event = createTaskDoneEvent(task);
