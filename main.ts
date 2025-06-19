@@ -49,6 +49,7 @@ switch (command) {
       String(args._[1]), // タスクIDを文字列として取得
       dataFilePath,
       eventLogPath,
+      timeLogPath,
     ).catch((err) => {
       console.error("タスク完了中にエラーが発生しました:", err);
     });

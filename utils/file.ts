@@ -1,4 +1,5 @@
 import { Task } from "../types/task.ts";
+import { TimeLog } from "../types/timeLog.ts";
 
 export async function ensureDataFile(filePath: string, defaultContent: string) {
   // ファイル存在チェック＆初期化
@@ -28,5 +29,20 @@ export async function readTasksFromFile(filePath: string): Promise<Task[]> {
     return JSON.parse(data) as Task[];
   } catch (_err) {
     return [];
+  }
+}
+
+export async function readJsonLines(filePath: string): Promise<TimeLog[]> {
+  try {
+    const text = await Deno.readTextFile(filePath);
+    return text
+      .split("\n")
+      .filter((line) => line.trim().length > 0)
+      .map((line) => JSON.parse(line));
+  } catch (err) {
+    if (err instanceof Deno.errors.NotFound) {
+      return [];
+    }
+    throw err;
   }
 }
