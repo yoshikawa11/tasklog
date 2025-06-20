@@ -16,9 +16,13 @@ export async function stopTask(
   eventLogPath: string,
   timeLogPath: string,
 ): Promise<void> {
+  const tasks: Task[] = await readTasksFromFile(dataFilePath);
+  const task = findTaskById(tasks, taskId);
+  if (!task) return;
+
   // 直近のstart/stopペアをチェック
   const logs = await readJsonLines(timeLogPath);
-  const taskLogs = logs.filter((l) => l.taskId === taskId);
+  const taskLogs = logs.filter((l) => l.taskId === task.id);
   let open = false;
   for (const log of taskLogs) {
     if (log.event === "start") open = true;
@@ -30,10 +34,6 @@ export async function stopTask(
     );
     return;
   }
-
-  const tasks: Task[] = await readTasksFromFile(dataFilePath);
-  const task = findTaskById(tasks, taskId);
-  if (!task) return;
 
   // イベントログを記録
   const stopTime = new Date().toISOString();
