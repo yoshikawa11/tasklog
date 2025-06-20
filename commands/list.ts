@@ -1,5 +1,7 @@
 import { Task } from "../types/task.ts";
+import { timeLogPath } from "../utils/const.ts";
 import { readTasksFromFile } from "../utils/file.ts";
+import { getActualMinutes } from "../utils/timeCalc.ts";
 // esm.sh CDN から string-width を取得
 import stringWidth from "https://esm.sh/string-width@7"; // 最新版7.xを使用
 
@@ -28,7 +30,9 @@ export async function listTasks(dataFilePath: string): Promise<void> {
       padDisplay(task.title, colWidths[1]),
       padDisplay(`${task.plannedMinutes} min`, colWidths[2]),
       padDisplay(
-        task.actualMinutes ? `${task.actualMinutes} min` : "-",
+        await getActualMinutes(task.id, timeLogPath) !== null
+          ? `${await getActualMinutes(task.id, timeLogPath)} min`
+          : "-",
         colWidths[3],
       ),
       padDisplay(task.status, colWidths[4]),

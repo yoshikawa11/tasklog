@@ -16,7 +16,7 @@ export async function doneTask(
   if (!task) return;
 
   task.status = "completed";
-  task.actualMinutes = await getActualMinutes(taskId, timeLogPath);
+  task.actualMinutes = await getActualMinutes(task.id, timeLogPath);
   await writeTasksToFile(dataFilePath, tasks, "[]");
 
   const event = createTaskDoneEvent(task);

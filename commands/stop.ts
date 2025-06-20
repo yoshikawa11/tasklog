@@ -1,4 +1,8 @@
-import { readTasksFromFile, writeTasksToFile } from "../utils/file.ts";
+import {
+  readJsonLines,
+  readTasksFromFile,
+  writeTasksToFile,
+} from "../utils/file.ts";
 import { Task } from "../types/task.ts";
 import { createTaskStopEvent } from "../utils/eventLogFactory.ts";
 import { saveLogEvent } from "../utils/logger.ts";
@@ -12,14 +16,26 @@ export async function stopTask(
   eventLogPath: string,
   timeLogPath: string,
 ): Promise<void> {
+  // 直近のstart/stopペアをチェック
+  const logs = await readJsonLines(timeLogPath);
+  const taskLogs = logs.filter((l) => l.taskId === taskId);
+  let open = false;
+  for (const log of taskLogs) {
+    if (log.event === "start") open = true;
+    if (log.event === "stop") open = false;
+  }
+  if (!open) {
+    console.error(
+      "このタスクは既に停止されています。startしてから再度stopしてください。",
+    );
+    return;
+  }
+
   const tasks: Task[] = await readTasksFromFile(dataFilePath);
   const task = findTaskById(tasks, taskId);
   if (!task) return;
 
-  // タスクのステータスを開始中に設定
-  task.status = "completed";
-
-  // タイムログを記録
+  // イベントログを記録
   const stopTime = new Date().toISOString();
 
   await writeTasksToFile(dataFilePath, tasks, "[]");
