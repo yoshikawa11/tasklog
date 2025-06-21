@@ -4,6 +4,7 @@ import { doneTask } from "./commands/done.ts";
 import { listTasks } from "./commands/list.ts";
 import { startTask } from "./commands/start.ts";
 import { stopTask } from "./commands/stop.ts";
+import { deleteTask } from "./commands/delete.ts";
 import { dataFilePath, eventLogPath, timeLogPath } from "./utils/const.ts";
 
 interface Args {
@@ -74,6 +75,16 @@ switch (command) {
       timeLogPath,
     ).catch((err) => {
       console.error("タスク開始中にエラーが発生しました:", err);
+    });
+    break;
+  }
+  case "delete": {
+    await deleteTask(
+      String(args._[1]), // タスクIDを文字列として取得
+      dataFilePath,
+      eventLogPath,
+    ).catch((err) => {
+      console.error("タスク削除中にエラーが発生しました:", err);
     });
     break;
   }
