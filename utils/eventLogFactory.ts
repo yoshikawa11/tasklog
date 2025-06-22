@@ -21,6 +21,14 @@ export function createTaskDoneEvent(task: Task): EventLog {
   };
 }
 
+export function createTaskDeleteEvent(task: Task): EventLog {
+  return {
+    timestamp: new Date().toISOString(),
+    type: "task:delete",
+    taskId: task.id,
+  };
+}
+
 export function createTaskStartEvent(
   task: Task,
   startTime: string,
