@@ -1,12 +1,15 @@
 import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import {
   ensureDataFile,
+  readJsonLines,
   readTasksFromFile,
   writeTasksToFile,
 } from "../../utils/file.ts";
 import { Task } from "../../types/task.ts";
+import { TimeLog } from "../../types/timeLog.ts";
 
 const testFilePath = "./tests/utils/test_tasks.json";
+const testJsonlPath = "./tests/utils/test_timelog.jsonl";
 const defaultContent = "[]";
 
 Deno.test("ensureDataFile: ファイルが存在しない場合、初期化される", async () => {
@@ -97,5 +100,43 @@ Deno.test("readTasksFromFile: ファイルが存在しない場合は空配列�
   }
 
   const result = await readTasksFromFile(testFilePath);
+  assertEquals(result, []);
+});
+
+Deno.test("readJsonLines: JSONLファイルが正しく読み込まれる", async () => {
+  const logs: TimeLog[] = [
+    {
+      event: "start",
+      taskId: "abc",
+      timestamp: "2025-06-24T10:00:00.000Z",
+    },
+    {
+      event: "stop",
+      taskId: "abc",
+      timestamp: "2025-06-24T11:00:00.000Z",
+    },
+  ];
+  // JSONL形式で書き込み
+  await Deno.writeTextFile(
+    testJsonlPath,
+    logs.map((l) => JSON.stringify(l)).join("\n") + "\n",
+  );
+
+  const result = await readJsonLines(testJsonlPath);
+  assertEquals(result.length, 2);
+  assertEquals(result[0].event, "start");
+  assertEquals(result[1].event, "stop");
+
+  // 後片付け
+  await Deno.remove(testJsonlPath);
+});
+
+Deno.test("readJsonLines: ファイルが存在しない場合は空配列を返す", async () => {
+  // 念のためファイルを削除
+  try {
+    await Deno.remove(testJsonlPath);
+  } catch (_) {}
+
+  const result = await readJsonLines(testJsonlPath);
   assertEquals(result, []);
 });

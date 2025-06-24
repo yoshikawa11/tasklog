@@ -7,6 +7,7 @@ import { doneTask } from "../../commands/done.ts";
 // テスト用のデータファイルパス
 const testDataFilePath = "./tests/commands/test_tasks.json";
 const testEventLogFilePath = "./tests/commands/test_eventLog.jsonl";
+const testTimeLogFilePath = "./tests/commands/test_timeLog.jsonl";
 
 Deno.test("done: タスクが正常に完了する", async () => {
   // 前準備: テスト用ファイルを空配列で初期化
@@ -22,7 +23,12 @@ Deno.test("done: タスクが正常に完了する", async () => {
   const tasks: Task[] = JSON.parse(data);
   const taskId = tasks[0].id;
 
-  await doneTask(taskId, testDataFilePath, testEventLogFilePath);
+  await doneTask(
+    taskId,
+    testDataFilePath,
+    testEventLogFilePath,
+    testTimeLogFilePath,
+  );
 
   assertEquals(tasks.length, 1);
   assertEquals(tasks[0].title, title);
