@@ -135,7 +135,9 @@ Deno.test("readJsonLines: ファイルが存在しない場合は空配列を返
   // 念のためファイルを削除
   try {
     await Deno.remove(testJsonlPath);
-  } catch (_) {}
+  } catch (_) {
+    // do nothing if file does not exist
+  }
 
   const result = await readJsonLines(testJsonlPath);
   assertEquals(result, []);
