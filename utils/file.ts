@@ -46,3 +46,7 @@ export async function readJsonLines(filePath: string): Promise<TimeLog[]> {
     throw err;
   }
 }
+
+export async function clearTaskToFile(filePath: string): Promise<void> {
+  await Deno.writeTextFile(filePath, "[]");
+}

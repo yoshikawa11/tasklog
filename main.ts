@@ -5,6 +5,7 @@ import { listTasks } from "./commands/list.ts";
 import { startTask } from "./commands/start.ts";
 import { stopTask } from "./commands/stop.ts";
 import { deleteTask } from "./commands/delete.ts";
+import { clearTask } from "./commands/clear.ts";
 import { dataFilePath, eventLogPath, timeLogPath } from "./utils/const.ts";
 
 interface Args {
@@ -85,6 +86,12 @@ switch (command) {
       eventLogPath,
     ).catch((err) => {
       console.error("タスク削除中にエラーが発生しました:", err);
+    });
+    break;
+  }
+  case "clear": {
+    await clearTask(dataFilePath, eventLogPath).catch((err) => {
+      console.error("タスククリア中にエラーが発生しました:", err);
     });
     break;
   }

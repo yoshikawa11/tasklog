@@ -56,3 +56,10 @@ export function createTaskStopEvent(
     },
   };
 }
+
+export function createTaskClearEvent(): EventLog {
+  return {
+    timestamp: new Date().toISOString(),
+    type: "task:clear",
+  };
+}

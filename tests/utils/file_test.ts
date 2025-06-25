@@ -4,6 +4,7 @@ import {
   readJsonLines,
   readTasksFromFile,
   writeTasksToFile,
+  clearTaskToFile,
 } from "../../utils/file.ts";
 import { Task } from "../../types/task.ts";
 import { TimeLog } from "../../types/timeLog.ts";
@@ -141,4 +142,29 @@ Deno.test("readJsonLines: ファイルが存在しない場合は空配列を返
 
   const result = await readJsonLines(testJsonlPath);
   assertEquals(result, []);
+});
+
+Deno.test("clearTaskToFile: タスクファイルが空配列で初期化される", async () => {
+  // 事前にダミータスクを書き込む
+  const tasks: Task[] = [
+    {
+      id: "dummy",
+      title: "ダミータスク",
+      createdAt: "2025-06-25T10:00:00.000Z",
+      plannedMinutes: 10,
+      actualMinutes: null,
+      status: "pending",
+    },
+  ];
+  await writeTasksToFile(testFilePath, tasks, defaultContent);
+
+  // clearTaskToFileを実行
+  await clearTaskToFile(testFilePath);
+
+  // ファイル内容が空配列になっていることを確認
+  const result = await readTasksFromFile(testFilePath);
+  assertEquals(result, []);
+
+  // 後片付け
+  await Deno.remove(testFilePath);
 });
