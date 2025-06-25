@@ -42,7 +42,7 @@ Deno.test("listTasks: タスク一覧が正しく表示される", async () => {
 
   // 標準出力をキャプチャしてlistTasksを実行
   const output = await captureConsoleLog(async () => {
-    await listTasks(testDataFilePath);
+    await listTasks(testDataFilePath, {});
   });
 
   // ヘッダーやタスクID・タイトルが出力に含まれていることを確認
@@ -58,5 +58,114 @@ Deno.test("listTasks: タスク一覧が正しく表示される", async () => {
   }
 
   // 後片付け
+  await Deno.remove(testDataFilePath);
+});
+
+Deno.test("listTasks: statusフィルタでcompletedのみ表示される", async () => {
+  const tasks: Task[] = [
+    {
+      id: "a1",
+      title: "完了タスク",
+      createdAt: "2025-06-23T10:00:00.000Z",
+      plannedMinutes: 10,
+      actualMinutes: 10,
+      status: "completed",
+    },
+    {
+      id: "a2",
+      title: "未完了タスク",
+      createdAt: "2025-06-23T11:00:00.000Z",
+      plannedMinutes: 20,
+      actualMinutes: null,
+      status: "pending",
+    },
+  ];
+  await writeTasksToFile(testDataFilePath, tasks, "[]");
+
+  const output = await captureConsoleLog(async () => {
+    await listTasks(testDataFilePath, { status: "completed" });
+  });
+
+  if (!output.includes("完了タスク")) {
+    throw new Error("completedタスクが表示されていません");
+  }
+  if (output.includes("未完了タスク")) {
+    throw new Error("pendingタスクが表示されています");
+  }
+
+  await Deno.remove(testDataFilePath);
+});
+
+Deno.test("listTasks: titleフィルタで部分一致したタスクのみ表示される", async () => {
+  const tasks: Task[] = [
+    {
+      id: "b1",
+      title: "開発作業",
+      createdAt: "2025-06-23T10:00:00.000Z",
+      plannedMinutes: 10,
+      actualMinutes: 10,
+      status: "completed",
+    },
+    {
+      id: "b2",
+      title: "レビュー",
+      createdAt: "2025-06-23T11:00:00.000Z",
+      plannedMinutes: 20,
+      actualMinutes: null,
+      status: "pending",
+    },
+  ];
+  await writeTasksToFile(testDataFilePath, tasks, "[]");
+
+  const output = await captureConsoleLog(async () => {
+    await listTasks(testDataFilePath, { title: "開発" });
+  });
+
+  if (!output.includes("開発作業")) {
+    throw new Error("titleフィルタで一致するタスクが表示されていません");
+  }
+  if (output.includes("レビュー")) {
+    throw new Error("titleフィルタで一致しないタスクが表示されています");
+  }
+
+  await Deno.remove(testDataFilePath);
+});
+
+Deno.test("listTasks: plannedMinutesフィルタで指定以下のみ表示される", async () => {
+  const tasks: Task[] = [
+    {
+      id: "c1",
+      title: "短いタスク",
+      createdAt: "2025-06-23T10:00:00.000Z",
+      plannedMinutes: 10,
+      actualMinutes: 10,
+      status: "completed",
+    },
+    {
+      id: "c2",
+      title: "長いタスク",
+      createdAt: "2025-06-23T11:00:00.000Z",
+      plannedMinutes: 60,
+      actualMinutes: null,
+      status: "pending",
+    },
+  ];
+  await writeTasksToFile(testDataFilePath, tasks, "[]");
+
+  const output = await captureConsoleLog(async () => {
+    await listTasks(testDataFilePath, { plannedMinutes: 20 });
+  });
+
+  if (!output.includes("短いタスク")) {
+    throw new Error(
+      "plannedMinutesフィルタで一致するタスクが表示されていません",
+    );
+  }
+  if (output.includes("長いタスク")) {
+    throw new Error(
+      "plannedMinutesフィルタで一致しないタスクが表示されています",
+    );
+  }
+
   await Deno.remove(testDataFilePath);
 });

@@ -13,7 +13,9 @@ interface Args {
   [key: string]: unknown; // 名前付きオプション引数
 }
 
-const args: Args = parseArgs(Deno.args);
+const args: Args = parseArgs(Deno.args, {
+  string: ["status", "overtime", "title", "plannedMinutes"],
+});
 
 const command = args._[0];
 
@@ -42,7 +44,12 @@ switch (command) {
     break;
   }
   case "list": {
-    await listTasks(dataFilePath);
+    await listTasks(dataFilePath, {
+      status: args.status as string | undefined,
+      overtime: args.overtime as boolean | undefined,
+      title: args.title as string | undefined,
+      plannedMinutes: args.plannedMinutes as number | undefined,
+    });
     break;
   }
   case "done": {
