@@ -30,7 +30,7 @@ export async function listTasks(dataFilePath: string): Promise<void> {
       padDisplay(task.title, colWidths[1]),
       padDisplay(`${task.plannedMinutes} min`, colWidths[2]),
       padDisplay(
-        await getActualMinutes(task.id, timeLogPath) !== null
+        task.status !== "pending" && task.actualMinutes !== null
           ? `${await getActualMinutes(task.id, timeLogPath)} min`
           : "-",
         colWidths[3],
