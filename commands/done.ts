@@ -15,10 +15,20 @@ export async function doneTask(
   const task = findTaskById(tasks, taskId);
   if (!task) return;
 
-  task.status = "completed";
-  task.actualMinutes = await getActualMinutes(task.id, timeLogPath);
-  await writeTasksToFile(dataFilePath, tasks, "[]");
+  const actualMinutes = await getActualMinutes(task.id, timeLogPath);
 
-  const event = createTaskDoneEvent(task);
+  // taskの変更点をtasksにも反映
+  const updatedTasks = tasks.map((t) =>
+    t.id === task.id
+      ? { ...t, status: "completed" as Task["status"], actualMinutes }
+      : t
+  );
+  await writeTasksToFile(dataFilePath, updatedTasks, "[]");
+
+  const event = createTaskDoneEvent({
+    ...task,
+    status: "completed",
+    actualMinutes,
+  });
   await saveLogEvent(eventLogPath, event);
 }

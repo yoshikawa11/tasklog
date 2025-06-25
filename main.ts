@@ -15,7 +15,6 @@ interface Args {
 
 const args: Args = parseArgs(Deno.args);
 
-// コマンドに応じて分岐（処理は未実装）
 const command = args._[0];
 
 switch (command) {
@@ -95,7 +94,7 @@ switch (command) {
     });
     break;
   }
-  // 他のコマンドも同様に追加
+
   default: {
     console.log("未対応のコマンドです");
   }

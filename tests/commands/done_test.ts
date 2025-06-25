@@ -30,10 +30,12 @@ Deno.test("done: タスクが正常に完了する", async () => {
     testTimeLogFilePath,
   );
 
-  assertEquals(tasks.length, 1);
-  assertEquals(tasks[0].title, title);
-  assertEquals(tasks[0].actualMinutes, null);
-  assertEquals(tasks[0].status, "completed");
+  const data2 = await Deno.readTextFile(testDataFilePath);
+  const updateTasks: Task[] = JSON.parse(data2);
+  assertEquals(updateTasks.length, 1);
+  assertEquals(updateTasks[0].title, title);
+  assertEquals(updateTasks[0].actualMinutes, 0);
+  assertEquals(updateTasks[0].status, "completed");
 
   // 後片付け: テスト用ファイルを削除
   await Deno.remove(testDataFilePath);
