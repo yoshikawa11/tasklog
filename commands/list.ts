@@ -17,6 +17,10 @@ function padDisplay(str: string, width: number): string {
   return str + " ".repeat(Math.max(0, width - displayWidth));
 }
 
+function truncate(str: string, max: number): string {
+  return stringWidth(str) > max ? str.slice(0, max - 1) + "…" : str;
+}
+
 export async function listTasks(
   dataFilePath: string,
   filters: ListOptions,
@@ -57,29 +61,44 @@ export async function listTasks(
     return;
   }
 
-  const headers = ["ID", "Title", "Planned", "Actual", "Status"];
-  const colWidths = [8, 30, 10, 10, 8];
+  // ターミナルの幅を取得（デフォルト80カラム）
+  let terminalWidth = 80;
+  try {
+    terminalWidth = Deno.consoleSize().columns;
+  } catch {
+    // 取得できない場合は80
+  }
 
-  const headerLine = headers.map((h, i) => padDisplay(h, colWidths[i])).join(
-    " | ",
-  );
-  const separator = colWidths.map((w) => "-".repeat(w)).join("-+-");
+  // 各列の幅を決定
+  const colWidths = [8, 10, 10, 10, 12]; // ID, Title, Planned, Actual, Status
+  const fixedWidth = colWidths.reduce((a, b) => a + b, 0) + 4 * 3; // 4つの区切り" | "
+  const titleWidth = Math.max(20, terminalWidth - fixedWidth);
+
+  // 列幅配列を再構築
+  const finalColWidths = [8, titleWidth, 10, 10, 12];
+
+  const headers = ["ID", "Title", "Planned", "Actual", "Status"];
+  const headerLine = headers.map((h, i) => padDisplay(h, finalColWidths[i]))
+    .join(
+      " | ",
+    );
+  const separator = finalColWidths.map((w) => "-".repeat(w)).join("-+-");
 
   console.log(headerLine);
   console.log(separator);
 
   for (const task of filtered) {
     const row = [
-      padDisplay(task.id.slice(0, 8), colWidths[0]),
-      padDisplay(task.title, colWidths[1]),
-      padDisplay(`${task.plannedMinutes} min`, colWidths[2]),
+      padDisplay(task.id.slice(0, 8), finalColWidths[0]),
+      padDisplay(truncate(task.title, titleWidth), finalColWidths[1]),
+      padDisplay(`${task.plannedMinutes} min`, finalColWidths[2]),
       padDisplay(
         task.status !== "pending" || task.actualMinutes !== null
           ? `${await getActualMinutes(task.id, timeLogPath)} min`
           : "-",
-        colWidths[3],
+        finalColWidths[3],
       ),
-      padDisplay(task.status, colWidths[4]),
+      padDisplay(task.status, finalColWidths[4]),
     ].join(" | ");
 
     console.log(row);

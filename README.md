@@ -94,11 +94,63 @@ tasklog delete <タスクID>
 tasklog list
 ```
 
+#### 表示イメージ
+
+```
+ID       | Title                          | Planned    | Actual     | Status  
+---------+--------------------------------+------------+------------+-------------
+ed091db3 | new task                       | 120 min    | 1 min      | completed
+96926cbb | スーパーに買い物に行く             | 120 min    | 64 min     | in_progress
+a16179c0 | new task3                      | 10 min     | -          | pending 
+```
+
+- `ID` … タスクIDの先頭8文字
+- `Title` … タスク名
+- `Planned` … 予定時間（分）
+- `Actual` … 実績時間（分、未着手は「-」）
+- `Status` … タスクの状態（pending, in_progress, completed など）
+
 ### 7. タスクデータの全削除
 
 ```sh
 tasklog clear
 ```
+
+---
+
+## フィルター機能
+
+`list` コマンドでは、さまざまなフィルターオプションを指定してタスクを絞り込むことができます。
+
+- **ステータスで絞り込み**  
+  `--status` オプションでカンマ区切り指定が可能です。  
+  例:  
+  ```sh
+  tasklog list --status=pending,completed
+  ```
+
+- **タイトルで部分一致検索**  
+  `--title` オプションでタイトルに含まれる文字列で絞り込みます。  
+  例:  
+  ```sh
+  tasklog list --title=開発
+  ```
+
+- **予定時間で絞り込み**  
+  `--plannedMinutes` オプションで指定した分数以下のタスクのみ表示します。  
+  例:  
+  ```sh
+  tasklog list --plannedMinutes=30
+  ```
+
+- **予定時間超過タスクのみ表示**  
+  `--overtime=true` で予定時間を超過したタスクのみ表示します。  
+  例:  
+  ```sh
+  tasklog list --overtime=true
+  ```
+
+複数のフィルターを組み合わせて使うことはできません。
 
 ---
 

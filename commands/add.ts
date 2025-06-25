@@ -28,8 +28,8 @@ export async function add(
   const newTask = createTask(title, plannedMinutes);
   tasks.push(newTask);
   await writeTasksToFile(dataFilePath, tasks, defaultDataFileContent);
+  console.log(`タスクを追加しました: ${newTask.title} (id: ${newTask.id})`);
 
-  // TODO: logger.ts でログ記録を追加
   await ensureDataFile(eventLogPath, "");
   const event = createTaskAddEvent(newTask);
   await saveLogEvent(eventLogPath, event);
