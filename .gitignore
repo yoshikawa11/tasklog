@@ -1,3 +1,6 @@
 /data/tasklog.json
 /data/eventlog.jsonl
 /data/timelog.jsonl
+tasklog_mac_x86_64
+tasklog_linux_x86_64
+tasklog.exe

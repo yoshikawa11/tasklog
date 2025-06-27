@@ -7,6 +7,16 @@ export async function ensureDataFile(filePath: string, defaultContent: string) {
     await Deno.stat(filePath);
   } catch (err) {
     if (err instanceof Deno.errors.NotFound) {
+      // ディレクトリが存在しない場合は作成
+      const dir = filePath.substring(0, filePath.lastIndexOf("/"));
+      if (dir) {
+        try {
+          await Deno.mkdir(dir, { recursive: true });
+        } catch (e) {
+          // 既に存在する場合は無視
+          if (!(e instanceof Deno.errors.AlreadyExists)) throw e;
+        }
+      }
       await Deno.writeTextFile(filePath, defaultContent);
     } else {
       throw err;
