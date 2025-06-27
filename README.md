@@ -19,17 +19,18 @@ TaskLog CLIは、タスクの追加・開始・停止・完了・削除・一覧
 
 ---
 
-## インストール(準備中)
+## インストール
 
 本ツールは Deno の `deno compile` でビルドされたバイナリとして配布されています。  
 Deno のインストールは不要です。  
-配布されたバイナリ（例: `tasklog` または `tasklog.exe`）を任意のディレクトリに配置し、実行権限を付与してください。
+[リリースページ](https://github.com/yoshikawa11/tasklog/releases)から配布されたバイナリ（例: `tasklog` または `tasklog.exe`）を任意のディレクトリに配置し、実行権限を付与してください。
 
 ```sh
 chmod +x ./tasklog
 ```
 
----
+<details>
+<summary>パスの通し方を見る</summary>
 
 ## パスの通し方
 
@@ -53,6 +54,8 @@ source ~/.bashrc   # または source ~/.zshrc
 ```
 
 これで、どのディレクトリからでも `tasklog` コマンドとして実行できます。
+
+</details>
 
 ---
 
