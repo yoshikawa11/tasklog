@@ -4,6 +4,7 @@ import { Task } from "../../types/task.ts";
 
 // テスト用ファイルパス
 const testDataFilePath = "./tests/commands/test_tasks.json";
+const testTimeLogPath = "./tests/commands/test_timelog.jsonl";
 
 // 標準出力をキャプチャするユーティリティ
 function captureConsoleLog(fn: () => Promise<void>): Promise<string> {
@@ -42,7 +43,7 @@ Deno.test("listTasks: タスク一覧が正しく表示される", async () => {
 
   // 標準出力をキャプチャしてlistTasksを実行
   const output = await captureConsoleLog(async () => {
-    await listTasks(testDataFilePath, {});
+    await listTasks(testDataFilePath, {}, testTimeLogPath);
   });
 
   // ヘッダーやタスクID・タイトルが出力に含まれていることを確認
@@ -83,7 +84,7 @@ Deno.test("listTasks: statusフィルタでcompletedのみ表示される", asyn
   await writeTasksToFile(testDataFilePath, tasks, "[]");
 
   const output = await captureConsoleLog(async () => {
-    await listTasks(testDataFilePath, { status: "completed" });
+    await listTasks(testDataFilePath, { status: "completed" }, testTimeLogPath);
   });
 
   if (!output.includes("完了タスク")) {
@@ -118,7 +119,7 @@ Deno.test("listTasks: titleフィルタで部分一致したタスクのみ表�
   await writeTasksToFile(testDataFilePath, tasks, "[]");
 
   const output = await captureConsoleLog(async () => {
-    await listTasks(testDataFilePath, { title: "開発" });
+    await listTasks(testDataFilePath, { title: "開発" }, testTimeLogPath);
   });
 
   if (!output.includes("開発作業")) {
@@ -153,7 +154,7 @@ Deno.test("listTasks: plannedMinutesフィルタで指定以下のみ表示さ�
   await writeTasksToFile(testDataFilePath, tasks, "[]");
 
   const output = await captureConsoleLog(async () => {
-    await listTasks(testDataFilePath, { plannedMinutes: 20 });
+    await listTasks(testDataFilePath, { plannedMinutes: 20 }, testTimeLogPath);
   });
 
   if (!output.includes("短いタスク")) {
@@ -168,4 +169,67 @@ Deno.test("listTasks: plannedMinutesフィルタで指定以下のみ表示さ�
   }
 
   await Deno.remove(testDataFilePath);
+});
+
+Deno.test("listTasks: isOvertimeフィルタで予定超過タスクのみ表示される", async () => {
+  // 予定時間を超過したタスクと、超過していないタスクを用意
+  const tasks: Task[] = [
+    {
+      id: "ot1",
+      title: "超過タスク",
+      createdAt: "2025-06-23T10:00:00.000Z",
+      plannedMinutes: 30,
+      actualMinutes: null,
+      status: "completed",
+    },
+    {
+      id: "ot2",
+      title: "未超過タスク",
+      createdAt: "2025-06-23T11:00:00.000Z",
+      plannedMinutes: 60,
+      actualMinutes: null,
+      status: "completed",
+    },
+  ];
+  await writeTasksToFile(testDataFilePath, tasks, "[]");
+
+  // タイムログを作成（ot1は40分、ot2は30分）
+  const timeLogs = [
+    { event: "start", taskId: "ot1", timestamp: "2025-06-23T10:00:00.000Z" },
+    { event: "stop", taskId: "ot1", timestamp: "2025-06-23T10:40:00.000Z" },
+    { event: "start", taskId: "ot2", timestamp: "2025-06-23T11:00:00.000Z" },
+    { event: "stop", taskId: "ot2", timestamp: "2025-06-23T11:30:00.000Z" },
+  ];
+  const testTimeLogPath = "./tests/commands/test_timelog.jsonl";
+  await Deno.writeTextFile(
+    testTimeLogPath,
+    timeLogs.map((l) => JSON.stringify(l)).join("\n") + "\n",
+  );
+
+  // listTasksのtimeLogPathを上書きするため、グローバル変数を一時的に変更
+  const { timeLogPath } = await import("../../utils/const.ts");
+  const originalTimeLogPath = timeLogPath;
+  // 型安全なglobalThis拡張
+  try {
+    (globalThis as typeof globalThis & { timeLogPath: string }).timeLogPath =
+      testTimeLogPath;
+
+    const output = await captureConsoleLog(async () => {
+      await listTasks(testDataFilePath, { isOvertime: true }, testTimeLogPath);
+    });
+
+    // 検証
+    if (!output.includes("超過タスク")) {
+      throw new Error("isOvertimeフィルタで超過タスクが表示されていません");
+    }
+    if (output.includes("未超過タスク")) {
+      throw new Error("isOvertimeフィルタで未超過タスクが表示されています");
+    }
+  } finally {
+    // 後片付け
+    await Deno.remove(testDataFilePath);
+    await Deno.remove(testTimeLogPath);
+    (globalThis as typeof globalThis & { timeLogPath: string }).timeLogPath =
+      originalTimeLogPath;
+  }
 });

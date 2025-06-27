@@ -1,5 +1,4 @@
 import { Task } from "../types/task.ts";
-import { timeLogPath } from "../utils/const.ts";
 import { readTasksFromFile } from "../utils/file.ts";
 import { getActualMinutes } from "../utils/timeCalc.ts";
 // esm.sh CDN から string-width を取得
@@ -7,7 +6,7 @@ import stringWidth from "https://esm.sh/string-width@7"; // 最新版7.xを使�
 
 interface ListOptions {
   status?: string;
-  overtime?: boolean;
+  isOvertime?: boolean;
   title?: string;
   plannedMinutes?: number;
 }
@@ -24,6 +23,7 @@ function truncate(str: string, max: number): string {
 export async function listTasks(
   dataFilePath: string,
   filters: ListOptions,
+  timeLogPath: string,
 ): Promise<void> {
   const tasks: Task[] = await readTasksFromFile(dataFilePath);
 
@@ -36,7 +36,6 @@ export async function listTasks(
   }
 
   const filtered: Task[] = [];
-  const isOvertime = toBoolean(filters.overtime);
 
   for (const task of tasks) {
     if (statusList && !statusList.includes(task.status)) continue;
@@ -48,7 +47,7 @@ export async function listTasks(
     ) {
       continue;
     }
-    if (isOvertime) {
+    if (filters.isOvertime) {
       if (task.plannedMinutes === null) continue;
       const actualMinutes = await getActualMinutes(task.id, timeLogPath);
       if (actualMinutes <= task.plannedMinutes) continue;
@@ -103,10 +102,4 @@ export async function listTasks(
 
     console.log(row);
   }
-}
-
-function toBoolean(val: unknown): boolean {
-  if (val === true || val === "true") return true;
-  if (val === false || val === "false") return false;
-  return Boolean(val);
 }
