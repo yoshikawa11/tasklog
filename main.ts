@@ -44,11 +44,16 @@ switch (command) {
     break;
   }
   case "list": {
+    const isOvertime = args.overtime === true ||
+      args.overtime === "true" ||
+      args.overtime === "";
     await listTasks(dataFilePath, {
       status: args.status as string | undefined,
-      overtime: args.overtime as boolean | undefined,
+      isOvertime,
       title: args.title as string | undefined,
       plannedMinutes: args.plannedMinutes as number | undefined,
+    }, timeLogPath).catch((err) => {
+      console.error("タスク一覧取得中にエラーが発生しました:", err);
     });
     break;
   }
