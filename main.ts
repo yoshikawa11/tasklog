@@ -6,7 +6,12 @@ import { startTask } from "./commands/start.ts";
 import { stopTask } from "./commands/stop.ts";
 import { deleteTask } from "./commands/delete.ts";
 import { clearTask } from "./commands/clear.ts";
-import { dataFilePath, eventLogPath, timeLogPath } from "./utils/const.ts";
+import {
+  dataFilePath,
+  eventLogPath,
+  timeLogPath,
+  version,
+} from "./utils/const.ts";
 
 interface Args {
   _: (string | number)[];
@@ -14,10 +19,15 @@ interface Args {
 }
 
 const args: Args = parseArgs(Deno.args, {
-  string: ["status", "overtime", "title", "plannedMinutes"],
+  string: ["status", "overtime", "title", "plannedMinutes", "version"],
 });
 
 const command = args._[0];
+
+if (isVersion(args)) {
+  console.log(`TaskLog CLI - Version ${version}`);
+  Deno.exit(0);
+}
 
 switch (command) {
   case "add": {
@@ -110,4 +120,10 @@ switch (command) {
   default: {
     console.log("未対応のコマンドです");
   }
+}
+
+function isVersion(args: Args): boolean {
+  return args.version === true ||
+    args.version === "true" ||
+    args.version === "";
 }
