@@ -24,7 +24,7 @@ const args: Args = parseArgs(Deno.args, {
 
 const command = args._[0];
 
-if (isVersion(args)) {
+if (isOptionEnabled(args.version)) {
   console.log(`TaskLog CLI - Version ${version}`);
   Deno.exit(0);
 }
@@ -54,9 +54,7 @@ switch (command) {
     break;
   }
   case "list": {
-    const isOvertime = args.overtime === true ||
-      args.overtime === "true" ||
-      args.overtime === "";
+    const isOvertime = isOptionEnabled(args.overtime);
     await listTasks(dataFilePath, {
       status: args.status as string | undefined,
       isOvertime,
@@ -122,8 +120,6 @@ switch (command) {
   }
 }
 
-function isVersion(args: Args): boolean {
-  return args.version === true ||
-    args.version === "true" ||
-    args.version === "";
+export function isOptionEnabled(val: unknown): boolean {
+  return val === true || val === "true" || val === "";
 }
