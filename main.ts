@@ -19,13 +19,18 @@ interface Args {
 }
 
 const args: Args = parseArgs(Deno.args, {
-  string: ["status", "overtime", "title", "plannedMinutes", "version"],
+  string: ["status", "overtime", "title", "plannedMinutes", "version", "help"],
 });
 
 const command = args._[0];
 
 if (isOptionEnabled(args.version)) {
   console.log(`TaskLog CLI - Version ${version}`);
+  Deno.exit(0);
+}
+
+if (isOptionEnabled(args.help)) {
+  showHelp();
   Deno.exit(0);
 }
 
@@ -122,4 +127,19 @@ switch (command) {
 
 export function isOptionEnabled(val: unknown): boolean {
   return val === true || val === "true" || val === "";
+}
+
+export function showHelp(): void {
+  console.log(`
+TaskLog CLI - タスクを管理しタスクにかかる時間を記録するツール
+バージョン: ${version}
+使用可能なコマンド:
+  - add <タイトル> <予定時間> タスクを追加します
+  - list [--status=pending|in_progress|completed] [--overtime] [--title=タイトル] [--plannedMinutes=時間] タスクを一覧表示します。オプションで絞り込みが可能です
+  - done <タスクID> タスクを完了します
+  - start <タスクID> タスクにかかる時間の計測を開始します
+  - stop <タスクID> タスクの時間の計測を停止します
+  - delete <タスクID> タスクを削除します
+  - clear タスクを全てクリアします
+  `);
 }
