@@ -12,6 +12,7 @@ import {
   timeLogPath,
   version,
 } from "./utils/const.ts";
+import { Command } from "./commands/commands.ts";
 
 interface Args {
   _: (string | number)[];
@@ -35,8 +36,8 @@ if (isOptionEnabled(args.help)) {
 }
 
 switch (command) {
-  case "add": {
-    const title = String(args._[1]); // それぞれの型を明示する
+  case Command.Add: {
+    const title = String(args._[1]);
     const plannedMinutes = args._[2] ? Number(args._[2]) : null;
     if (!title) {
       console.error("タイトルを指定してください");
@@ -58,7 +59,7 @@ switch (command) {
     });
     break;
   }
-  case "list": {
+  case Command.List: {
     const isOvertime = isOptionEnabled(args.overtime);
     await listTasks(dataFilePath, {
       status: args.status as string | undefined,
@@ -70,9 +71,9 @@ switch (command) {
     });
     break;
   }
-  case "done": {
+  case Command.Done: {
     await doneTask(
-      String(args._[1]), // タスクIDを文字列として取得
+      String(args._[1]),
       dataFilePath,
       eventLogPath,
       timeLogPath,
@@ -81,9 +82,9 @@ switch (command) {
     });
     break;
   }
-  case "start": {
+  case Command.Start: {
     await startTask(
-      String(args._[1]), // タスクIDを文字列として取得
+      String(args._[1]),
       dataFilePath,
       eventLogPath,
       timeLogPath,
@@ -92,9 +93,9 @@ switch (command) {
     });
     break;
   }
-  case "stop": {
+  case Command.Stop: {
     await stopTask(
-      String(args._[1]), // タスクIDを文字列として取得
+      String(args._[1]),
       dataFilePath,
       eventLogPath,
       timeLogPath,
@@ -103,9 +104,9 @@ switch (command) {
     });
     break;
   }
-  case "delete": {
+  case Command.Delete: {
     await deleteTask(
-      String(args._[1]), // タスクIDを文字列として取得
+      String(args._[1]),
       dataFilePath,
       eventLogPath,
     ).catch((err) => {
@@ -113,7 +114,7 @@ switch (command) {
     });
     break;
   }
-  case "clear": {
+  case Command.Clear: {
     await clearTask(dataFilePath, eventLogPath).catch((err) => {
       console.error("タスククリア中にエラーが発生しました:", err);
     });

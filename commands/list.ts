@@ -1,15 +1,9 @@
 import { Task } from "../types/task.ts";
 import { readTasksFromFile } from "../utils/file.ts";
 import { getActualMinutes } from "../utils/timeCalc.ts";
+import { ListOptions } from "./commands.ts";
 // esm.sh CDN から string-width を取得,Deno対応の型定義付きURL
 import stringWidth from "https://esm.sh/string-width@7?dts";
-
-interface ListOptions {
-  status?: string;
-  isOvertime?: boolean;
-  title?: string;
-  plannedMinutes?: number;
-}
 
 function padDisplay(str: string, width: number): string {
   const displayWidth = stringWidth(str);
