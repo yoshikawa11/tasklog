@@ -2,6 +2,7 @@
   "version": "5",
   "specifiers": {
     "jsr:@std/assert@1": "1.0.13",
+    "jsr:@std/cli@*": "1.0.20",
     "jsr:@std/internal@^1.0.6": "1.0.8"
   },
   "jsr": {
@@ -11,15 +12,21 @@
         "jsr:@std/internal"
       ]
     },
+    "@std/cli@1.0.20": {
+      "integrity": "a8c384a2c98cec6ec6a2055c273a916e2772485eb784af0db004c5ab8ba52333"
+    },
     "@std/internal@1.0.8": {
       "integrity": "fc66e846d8d38a47cffd274d80d2ca3f0de71040f855783724bb6b87f60891f5"
     }
   },
   "redirects": {
+    "https://deno.land/std/cli/parse_args.ts": "https://deno.land/std@0.224.0/cli/parse_args.ts",
+    "https://deno.land/std/cli/parse_args/mod.ts": "https://deno.land/std@0.224.0/cli/parse_args/mod.ts",
     "https://esm.sh/ansi-regex@^6.0.1?target=denonext": "https://esm.sh/ansi-regex@6.1.0?target=denonext",
     "https://esm.sh/emoji-regex@^10.3.0?target=denonext": "https://esm.sh/emoji-regex@10.4.0?target=denonext",
     "https://esm.sh/get-east-asian-width@^1.0.0?target=denonext": "https://esm.sh/get-east-asian-width@1.3.0?target=denonext",
     "https://esm.sh/string-width@7": "https://esm.sh/string-width@7.2.0",
+    "https://esm.sh/string-width@7?dts": "https://esm.sh/string-width@7.2.0?dts",
     "https://esm.sh/strip-ansi@^7.1.0?target=denonext": "https://esm.sh/strip-ansi@7.1.0?target=denonext"
   },
   "remote": {
@@ -66,6 +73,7 @@
     "https://esm.sh/get-east-asian-width@1.3.0?target=denonext": "01d9fbb4dfbec02abd03bf63d09f1f0d65d25cf33ea27e16a74ce54234a4a884",
     "https://esm.sh/string-width@7.2.0": "288b87103bb29550239fb06990b1a8081101083e1f5715b28ce93efc4b8f732a",
     "https://esm.sh/string-width@7.2.0/denonext/string-width.mjs": "329caba194cd7e62a0d893c070d9a88bbc5123e70e7d4076dbf6b0e4a7b925ce",
+    "https://esm.sh/string-width@7.2.0?dts": "288b87103bb29550239fb06990b1a8081101083e1f5715b28ce93efc4b8f732a",
     "https://esm.sh/strip-ansi@7.1.0/denonext/strip-ansi.mjs": "125b91ddc1ed96ba318e29930a14192a66fd1b7b54f7694f119c3e4128299c17",
     "https://esm.sh/strip-ansi@7.1.0?target=denonext": "5fb6439a60f4d6b9673a8ab122dddde201e3d676d97874ea9e7428b4bb9f6e2e"
   },

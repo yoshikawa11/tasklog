@@ -1,8 +1,8 @@
 import { Task } from "../types/task.ts";
 import { readTasksFromFile } from "../utils/file.ts";
 import { getActualMinutes } from "../utils/timeCalc.ts";
-// esm.sh CDN から string-width を取得
-import stringWidth from "https://esm.sh/string-width@7"; // 最新版7.xを使用
+// esm.sh CDN から string-width を取得,Deno対応の型定義付きURL
+import stringWidth from "https://esm.sh/string-width@7?dts";
 
 interface ListOptions {
   status?: string;

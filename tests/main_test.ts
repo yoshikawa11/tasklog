@@ -1,5 +1,7 @@
-import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
-import { assertStringIncludes } from "@std/assert";
+import {
+  assertEquals,
+  assertStringIncludes,
+} from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { isOptionEnabled } from "../main.ts";
 
 // main.tsのdefault: 未対応コマンドのテスト

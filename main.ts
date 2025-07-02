@@ -1,4 +1,4 @@
-import { parseArgs } from "https://deno.land/std@0.224.0/cli/parse_args.ts";
+import { parseArgs } from "jsr:@std/cli/parse-args";
 import { add } from "./commands/add.ts";
 import { doneTask } from "./commands/done.ts";
 import { listTasks } from "./commands/list.ts";
