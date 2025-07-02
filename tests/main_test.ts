@@ -2,24 +2,22 @@ import {
   assertEquals,
   assertStringIncludes,
 } from "https://deno.land/std@0.224.0/assert/mod.ts";
-import { isOptionEnabled } from "../main.ts";
+import { isOptionEnabled, main } from "../main.ts";
 
 // main.tsのdefault: 未対応コマンドのテスト
-Deno.test("main: 未対応コマンドの場合は案内が表示される", () => {
+Deno.test("main: 未対応コマンドの場合は案内が表示される", async () => {
   const originalConsoleLog = console.log;
   let output = "";
   console.log = (msg: string) => {
     output += msg;
   };
 
-  // 未対応コマンドを想定
-  const command = "unknown";
-  switch (command) {
-    // ...他のcase省略...
-    default: {
-      console.log("未対応のコマンドです");
-    }
-  }
+  const testArgs = {
+    _: ["miss-command", "test task", 10],
+    // 必要なオプションを追加
+  };
+  // main関数を直接呼び出し
+  await main(testArgs);
 
   console.log = originalConsoleLog;
   assertStringIncludes(output, "未対応のコマンドです");

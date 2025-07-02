@@ -19,111 +19,130 @@ interface Args {
   [key: string]: unknown; // 名前付きオプション引数
 }
 
-const args: Args = parseArgs(Deno.args, {
-  string: ["status", "overtime", "title", "plannedMinutes", "version", "help"],
-});
+export async function main(args: Args): Promise<void> {
+  const command = typeof args._[0] === "string"
+    ? (args._[0] as string).toLowerCase()
+    : args._[0];
 
-const command = args._[0];
+  if (isOptionEnabled(args.version)) {
+    console.log(`TaskLog CLI - Version ${version}`);
+    Deno.exit(0);
+  }
 
-if (isOptionEnabled(args.version)) {
-  console.log(`TaskLog CLI - Version ${version}`);
-  Deno.exit(0);
-}
+  if (isOptionEnabled(args.help)) {
+    showHelp();
+    Deno.exit(0);
+  }
 
-if (isOptionEnabled(args.help)) {
-  showHelp();
-  Deno.exit(0);
-}
+  switch (command) {
+    case Command.Add: {
+      const title = String(args._[1]);
+      const plannedMinutes = args._[2] ? Number(args._[2]) : null;
+      if (!title) {
+        console.error("タイトルを指定してください");
+        Deno.exit(1);
+      }
+      if (
+        plannedMinutes !== null && isNaN(plannedMinutes) && plannedMinutes <= 0
+      ) {
+        console.error("予定時間は数値で指定してください");
+        Deno.exit(1);
+      }
+      await add(
+        title,
+        plannedMinutes,
+        dataFilePath,
+        eventLogPath,
+      ).catch((err) => {
+        console.error("タスク追加中にエラーが発生しました:", err);
+      });
+      return;
+    }
+    case Command.List: {
+      const isOvertime = isOptionEnabled(args.overtime);
+      await listTasks(dataFilePath, {
+        status: args.status as string | undefined,
+        isOvertime,
+        title: args.title as string | undefined,
+        plannedMinutes: args.plannedMinutes as number | undefined,
+      }, timeLogPath).catch((err) => {
+        console.error("タスク一覧取得中にエラーが発生しました:", err);
+      });
+      return;
+    }
+    case Command.Done: {
+      await doneTask(
+        String(args._[1]),
+        dataFilePath,
+        eventLogPath,
+        timeLogPath,
+      ).catch((err) => {
+        console.error("タスク完了中にエラーが発生しました:", err);
+      });
+      return;
+    }
+    case Command.Start: {
+      await startTask(
+        String(args._[1]),
+        dataFilePath,
+        eventLogPath,
+        timeLogPath,
+      ).catch((err) => {
+        console.error("タスク開始中にエラーが発生しました:", err);
+      });
+      return;
+    }
+    case Command.Stop: {
+      await stopTask(
+        String(args._[1]),
+        dataFilePath,
+        eventLogPath,
+        timeLogPath,
+      ).catch((err) => {
+        console.error("タスク開始中にエラーが発生しました:", err);
+      });
+      return;
+    }
+    case Command.Delete: {
+      await deleteTask(
+        String(args._[1]),
+        dataFilePath,
+        eventLogPath,
+      ).catch((err) => {
+        console.error("タスク削除中にエラーが発生しました:", err);
+      });
+      return;
+    }
+    case Command.Clear: {
+      await clearTask(dataFilePath, eventLogPath).catch((err) => {
+        console.error("タスククリア中にエラーが発生しました:", err);
+      });
+      return;
+    }
 
-switch (command) {
-  case Command.Add: {
-    const title = String(args._[1]);
-    const plannedMinutes = args._[2] ? Number(args._[2]) : null;
-    if (!title) {
-      console.error("タイトルを指定してください");
+    default: {
+      console.log("未対応のコマンドです: " + args._[0]);
+      showHelp();
       Deno.exit(1);
     }
-    if (
-      plannedMinutes !== null && isNaN(plannedMinutes) && plannedMinutes <= 0
-    ) {
-      console.error("予定時間は数値で指定してください");
-      Deno.exit(1);
-    }
-    await add(
-      title,
-      plannedMinutes,
-      dataFilePath,
-      eventLogPath,
-    ).catch((err) => {
-      console.error("タスク追加中にエラーが発生しました:", err);
-    });
-    break;
   }
-  case Command.List: {
-    const isOvertime = isOptionEnabled(args.overtime);
-    await listTasks(dataFilePath, {
-      status: args.status as string | undefined,
-      isOvertime,
-      title: args.title as string | undefined,
-      plannedMinutes: args.plannedMinutes as number | undefined,
-    }, timeLogPath).catch((err) => {
-      console.error("タスク一覧取得中にエラーが発生しました:", err);
-    });
-    break;
-  }
-  case Command.Done: {
-    await doneTask(
-      String(args._[1]),
-      dataFilePath,
-      eventLogPath,
-      timeLogPath,
-    ).catch((err) => {
-      console.error("タスク完了中にエラーが発生しました:", err);
-    });
-    break;
-  }
-  case Command.Start: {
-    await startTask(
-      String(args._[1]),
-      dataFilePath,
-      eventLogPath,
-      timeLogPath,
-    ).catch((err) => {
-      console.error("タスク開始中にエラーが発生しました:", err);
-    });
-    break;
-  }
-  case Command.Stop: {
-    await stopTask(
-      String(args._[1]),
-      dataFilePath,
-      eventLogPath,
-      timeLogPath,
-    ).catch((err) => {
-      console.error("タスク開始中にエラーが発生しました:", err);
-    });
-    break;
-  }
-  case Command.Delete: {
-    await deleteTask(
-      String(args._[1]),
-      dataFilePath,
-      eventLogPath,
-    ).catch((err) => {
-      console.error("タスク削除中にエラーが発生しました:", err);
-    });
-    break;
-  }
-  case Command.Clear: {
-    await clearTask(dataFilePath, eventLogPath).catch((err) => {
-      console.error("タスククリア中にエラーが発生しました:", err);
-    });
-    break;
-  }
+}
 
-  default: {
-    console.log("未対応のコマンドです");
-  }
+if (import.meta.main) {
+  const parsedArgs: Args = parseArgs(Deno.args, {
+    string: [
+      "status",
+      "overtime",
+      "title",
+      "plannedMinutes",
+      "version",
+      "help",
+    ],
+  });
+  await main(parsedArgs).catch((err) => {
+    console.error("エラーが発生しました:", err);
+    Deno.exit(1);
+  });
 }
 
 export function isOptionEnabled(val: unknown): boolean {
