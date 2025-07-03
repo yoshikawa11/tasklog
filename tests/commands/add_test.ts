@@ -1,6 +1,7 @@
 import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { addTask } from "../../commands/add.ts";
 import { Task } from "../../types/task.ts";
+import { TaskContext } from "../../types/taskContext.ts";
 import { ensureDataFile } from "../../utils/file.ts";
 
 // テスト用のデータファイルパス
@@ -14,7 +15,13 @@ Deno.test("add: 新しいタスクが正常に追加される", async () => {
   const title = "テストタスク";
   const plannedMinutes = 30;
 
-  await addTask(title, plannedMinutes, testDataFilePath, testEventLogFilePath);
+  const context: TaskContext = {
+    dataFilePath: testDataFilePath,
+    eventLogPath: testEventLogFilePath,
+    timeLogPath: "",
+  };
+
+  await addTask(title, plannedMinutes, context);
 
   // ファイルからデータを読み込んで検証
   const data = await Deno.readTextFile(testDataFilePath);

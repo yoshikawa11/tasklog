@@ -14,6 +14,7 @@ import {
 } from "./utils/const.ts";
 import { Command } from "./commands/commands.ts";
 import { Args } from "./types/args.ts";
+import { TaskContext } from "./types/taskContext.ts";
 
 export async function main(args: Args): Promise<void> {
   const command = typeof args._[0] === "string"
@@ -30,9 +31,15 @@ export async function main(args: Args): Promise<void> {
     Deno.exit(0);
   }
 
+  const context: TaskContext = {
+    dataFilePath,
+    eventLogPath,
+    timeLogPath,
+  };
+
   switch (command) {
     case Command.Add: {
-      await processAdd(args);
+      await processAdd(args, context);
       return;
     }
     case Command.List: {
