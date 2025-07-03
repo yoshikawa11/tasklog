@@ -1,9 +1,11 @@
+import { ListOptions } from "./commands.ts";
+import { Args } from "../types/args.ts";
 import { Task } from "../types/task.ts";
 import { readTasksFromFile } from "../utils/file.ts";
 import { getActualMinutes } from "../utils/timeCalc.ts";
-import { ListOptions } from "./commands.ts";
-// esm.sh CDN から string-width を取得,Deno対応の型定義付きURL
-import stringWidth from "https://esm.sh/string-width@7?dts";
+import { isOptionEnabled } from "../main.ts";
+import stringWidth from "https://esm.sh/string-width@7.2.0?dts";
+import { TaskContext } from "../types/taskContext.ts";
 
 function padDisplay(str: string, width: number): string {
   const displayWidth = stringWidth(str);
@@ -11,14 +13,39 @@ function padDisplay(str: string, width: number): string {
 }
 
 function truncate(str: string, max: number): string {
-  return stringWidth(str) > max ? str.slice(0, max - 1) + "…" : str;
+  let result = "";
+  let w = 0;
+  for (const ch of str) {
+    const chWidth = stringWidth(ch);
+    if (w + chWidth > max - 1) break;
+    result += ch;
+    w += chWidth;
+  }
+  if (stringWidth(str) > max) result += "…";
+  return result;
+}
+
+export async function processList(
+  args: Args,
+  context: TaskContext,
+): Promise<void> {
+  const isOvertime = isOptionEnabled(args.isOvertime);
+  await listTasks({
+    dataFilePath: context.dataFilePath,
+    timeLogPath: context.timeLogPath,
+    status: args.status as string | undefined,
+    isOvertime,
+    title: args.title as string | undefined,
+    plannedMinutes: args.plannedMinutes as number | undefined,
+  }).catch((err) => {
+    console.error("タスク一覧取得中にエラーが発生しました:", err);
+  });
 }
 
 export async function listTasks(
-  dataFilePath: string,
-  filters: ListOptions,
-  timeLogPath: string,
+  options: ListOptions & { dataFilePath: string; timeLogPath: string },
 ): Promise<void> {
+  const { dataFilePath, timeLogPath, ...filters } = options;
   const tasks: Task[] = await readTasksFromFile(dataFilePath);
 
   // statusがカンマ区切りの場合に配列化
@@ -30,7 +57,6 @@ export async function listTasks(
   }
 
   const filtered: Task[] = [];
-
   for (const task of tasks) {
     if (statusList && !statusList.includes(task.status)) continue;
     if (filters.title && !task.title.includes(filters.title)) continue;
@@ -63,18 +89,14 @@ export async function listTasks(
   }
 
   // 各列の幅を決定
-  const colWidths = [8, 10, 10, 10, 12]; // ID, Title, Planned, Actual, Status
-  const fixedWidth = colWidths.reduce((a, b) => a + b, 0) + 4 * 3; // 4つの区切り" | "
+  const colWidths = [8, 10, 10, 10, 12];
+  const fixedWidth = colWidths.reduce((a, b) => a + b, 0) + 4 * 3;
   const titleWidth = Math.max(20, terminalWidth - fixedWidth);
-
-  // 列幅配列を再構築
   const finalColWidths = [8, titleWidth, 10, 10, 12];
 
   const headers = ["ID", "Title", "Planned", "Actual", "Status"];
   const headerLine = headers.map((h, i) => padDisplay(h, finalColWidths[i]))
-    .join(
-      " | ",
-    );
+    .join(" | ");
   const separator = finalColWidths.map((w) => "-".repeat(w)).join("-+-");
 
   console.log(headerLine);
@@ -93,7 +115,6 @@ export async function listTasks(
       ),
       padDisplay(task.status, finalColWidths[4]),
     ].join(" | ");
-
     console.log(row);
   }
 }

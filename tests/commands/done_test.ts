@@ -3,6 +3,7 @@ import { addTask } from "../../commands/add.ts";
 import { Task } from "../../types/task.ts";
 import { ensureDataFile } from "../../utils/file.ts";
 import { doneTask } from "../../commands/done.ts";
+import { TaskContext } from "../../types/taskContext.ts";
 
 // テスト用のデータファイルパス
 const testDataFilePath = "./tests/commands/test_tasks.json";
@@ -16,7 +17,13 @@ Deno.test("done: タスクが正常に完了する", async () => {
   const title = "テストタスク";
   const plannedMinutes = 30;
 
-  await addTask(title, plannedMinutes, testDataFilePath, testEventLogFilePath);
+  const context: TaskContext = {
+    dataFilePath: testDataFilePath,
+    eventLogPath: testEventLogFilePath,
+    timeLogPath: testTimeLogFilePath,
+  };
+
+  await addTask(title, plannedMinutes, context);
 
   // ファイルからデータを読み込んで検証
   const data = await Deno.readTextFile(testDataFilePath);

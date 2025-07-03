@@ -43,7 +43,7 @@ Deno.test("listTasks: タスク一覧が正しく表示される", async () => {
 
   // 標準出力をキャプチャしてlistTasksを実行
   const output = await captureConsoleLog(async () => {
-    await listTasks(testDataFilePath, {}, testTimeLogPath);
+    await listTasks({ dataFilePath: testDataFilePath, timeLogPath: testTimeLogPath });
   });
 
   // ヘッダーやタスクID・タイトルが出力に含まれていることを確認
@@ -84,7 +84,11 @@ Deno.test("listTasks: statusフィルタでcompletedのみ表示される", asyn
   await writeTasksToFile(testDataFilePath, tasks, "[]");
 
   const output = await captureConsoleLog(async () => {
-    await listTasks(testDataFilePath, { status: "completed" }, testTimeLogPath);
+    await listTasks({
+      dataFilePath: testDataFilePath,
+      timeLogPath: testTimeLogPath,
+      status: "completed",
+    });
   });
 
   if (!output.includes("完了タスク")) {
@@ -119,7 +123,11 @@ Deno.test("listTasks: titleフィルタで部分一致したタスクのみ表�
   await writeTasksToFile(testDataFilePath, tasks, "[]");
 
   const output = await captureConsoleLog(async () => {
-    await listTasks(testDataFilePath, { title: "開発" }, testTimeLogPath);
+    await listTasks({ 
+      dataFilePath: testDataFilePath,
+      timeLogPath: testTimeLogPath,
+      title: "開発",
+    });
   });
 
   if (!output.includes("開発作業")) {
@@ -154,7 +162,11 @@ Deno.test("listTasks: plannedMinutesフィルタで指定以下のみ表示さ�
   await writeTasksToFile(testDataFilePath, tasks, "[]");
 
   const output = await captureConsoleLog(async () => {
-    await listTasks(testDataFilePath, { plannedMinutes: 20 }, testTimeLogPath);
+    await listTasks({ 
+      dataFilePath: testDataFilePath,
+      timeLogPath: testTimeLogPath,
+      plannedMinutes: 20
+    });
   });
 
   if (!output.includes("短いタスク")) {
@@ -206,16 +218,13 @@ Deno.test("listTasks: isOvertimeフィルタで予定超過タスクのみ表示
     timeLogs.map((l) => JSON.stringify(l)).join("\n") + "\n",
   );
 
-  // listTasksのtimeLogPathを上書きするため、グローバル変数を一時的に変更
-  const { timeLogPath } = await import("../../utils/const.ts");
-  const originalTimeLogPath = timeLogPath;
-  // 型安全なglobalThis拡張
   try {
-    (globalThis as typeof globalThis & { timeLogPath: string }).timeLogPath =
-      testTimeLogPath;
-
     const output = await captureConsoleLog(async () => {
-      await listTasks(testDataFilePath, { isOvertime: true }, testTimeLogPath);
+      await listTasks({ 
+        dataFilePath: testDataFilePath,
+        timeLogPath: testTimeLogPath,
+        isOvertime: true
+      });
     });
 
     // 検証
@@ -229,7 +238,5 @@ Deno.test("listTasks: isOvertimeフィルタで予定超過タスクのみ表示
     // 後片付け
     await Deno.remove(testDataFilePath);
     await Deno.remove(testTimeLogPath);
-    (globalThis as typeof globalThis & { timeLogPath: string }).timeLogPath =
-      originalTimeLogPath;
   }
 });
