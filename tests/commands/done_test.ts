@@ -1,5 +1,5 @@
 import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
-import { add } from "../../commands/add.ts";
+import { addTask } from "../../commands/add.ts";
 import { Task } from "../../types/task.ts";
 import { ensureDataFile } from "../../utils/file.ts";
 import { doneTask } from "../../commands/done.ts";
@@ -16,7 +16,7 @@ Deno.test("done: タスクが正常に完了する", async () => {
   const title = "テストタスク";
   const plannedMinutes = 30;
 
-  await add(title, plannedMinutes, testDataFilePath, testEventLogFilePath);
+  await addTask(title, plannedMinutes, testDataFilePath, testEventLogFilePath);
 
   // ファイルからデータを読み込んで検証
   const data = await Deno.readTextFile(testDataFilePath);

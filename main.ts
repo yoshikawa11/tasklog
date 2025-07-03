@@ -1,5 +1,5 @@
 import { parseArgs } from "jsr:@std/cli/parse-args";
-import { add } from "./commands/add.ts";
+import { processAdd } from "./commands/add.ts";
 import { doneTask } from "./commands/done.ts";
 import { listTasks } from "./commands/list.ts";
 import { startTask } from "./commands/start.ts";
@@ -13,11 +13,7 @@ import {
   version,
 } from "./utils/const.ts";
 import { Command } from "./commands/commands.ts";
-
-interface Args {
-  _: (string | number)[];
-  [key: string]: unknown; // 名前付きオプション引数
-}
+import { Args } from "./types/args.ts";
 
 export async function main(args: Args): Promise<void> {
   const command = typeof args._[0] === "string"
@@ -36,26 +32,7 @@ export async function main(args: Args): Promise<void> {
 
   switch (command) {
     case Command.Add: {
-      const title = String(args._[1]);
-      const plannedMinutes = args._[2] ? Number(args._[2]) : null;
-      if (!title) {
-        console.error("タイトルを指定してください");
-        Deno.exit(1);
-      }
-      if (
-        plannedMinutes !== null && isNaN(plannedMinutes) && plannedMinutes <= 0
-      ) {
-        console.error("予定時間は数値で指定してください");
-        Deno.exit(1);
-      }
-      await add(
-        title,
-        plannedMinutes,
-        dataFilePath,
-        eventLogPath,
-      ).catch((err) => {
-        console.error("タスク追加中にエラーが発生しました:", err);
-      });
+      await processAdd(args);
       return;
     }
     case Command.List: {
