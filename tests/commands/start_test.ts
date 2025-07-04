@@ -2,6 +2,7 @@ import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { startTask } from "../../commands/start.ts";
 import { readTasksFromFile, writeTasksToFile } from "../../utils/file.ts";
 import { Task } from "../../types/task.ts";
+import { TaskContext } from "../../types/taskContext.ts";
 
 const testDataFilePath = "./tests/commands/test_tasks.json";
 const testEventLogFilePath = "./tests/commands/test_eventlog.jsonl";
@@ -19,13 +20,13 @@ Deno.test("startTask: タスク開始でイベント・タイムログが記録�
   };
   await writeTasksToFile(testDataFilePath, [task], "[]");
 
+  const context: TaskContext = {
+    dataFilePath: testDataFilePath,
+    eventLogPath: testEventLogFilePath,
+    timeLogPath: testTimeLogFilePath,
+  };
   // テスト実行
-  await startTask(
-    task.id,
-    testDataFilePath,
-    testEventLogFilePath,
-    testTimeLogFilePath,
-  );
+  await startTask(task.id, context);
 
   // タスクのステータスが in_progress になっていることを確認
   const tasks = await readTasksFromFile(testDataFilePath);
