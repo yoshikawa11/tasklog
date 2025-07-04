@@ -11,6 +11,7 @@ import { saveLogEvent } from "../utils/logger.ts";
 import { saveTimeLog } from "../utils/timeLogger.ts";
 import { findTaskById } from "../utils/taskUtils.ts";
 import { createStopEvent } from "../utils/timeLogFactory.ts";
+import { handleError } from "../utils/helpers.ts";
 
 export async function processStop(
   args: Args,
@@ -21,9 +22,7 @@ export async function processStop(
     console.error("タスクIDを指定してください");
     return;
   }
-  await stopTask(taskId, context).catch((err) => {
-    console.error("タスク停止中にエラーが発生しました:", err);
-  });
+  await stopTask(taskId, context).catch(handleError("タスク測定停止"));
 }
 
 export async function stopTask(

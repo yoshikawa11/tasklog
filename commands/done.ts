@@ -6,6 +6,7 @@ import { createTaskDoneEvent } from "../utils/eventLogFactory.ts";
 import { saveLogEvent } from "../utils/logger.ts";
 import { findTaskById } from "../utils/taskUtils.ts";
 import { getActualMinutes } from "../utils/timeCalc.ts";
+import { handleError } from "../utils/helpers.ts";
 
 export async function processDone(
   args: Args,
@@ -17,12 +18,7 @@ export async function processDone(
     return;
   }
 
-  await doneTask(
-    taskId,
-    context,
-  ).catch((err) => {
-    console.error("タスク完了中にエラーが発生しました:", err);
-  });
+  await doneTask(taskId, context).catch(handleError("タスク完了"));
 }
 
 export async function doneTask(

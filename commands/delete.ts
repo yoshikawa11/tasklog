@@ -9,6 +9,7 @@ import { saveLogEvent } from "../utils/logger.ts";
 import { Task } from "../types/task.ts";
 import { Args } from "../types/args.ts";
 import { TaskContext } from "../types/taskContext.ts";
+import { handleError } from "../utils/helpers.ts";
 
 export async function processDelete(
   args: Args,
@@ -20,7 +21,7 @@ export async function processDelete(
     return;
   }
 
-  await deleteTask(taskId, context);
+  await deleteTask(taskId, context).catch(handleError("タスクの削除"));
 }
 
 export async function deleteTask(

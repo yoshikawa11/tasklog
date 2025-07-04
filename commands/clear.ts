@@ -2,11 +2,10 @@ import { clearTaskToFile, ensureDataFile } from "../utils/file.ts";
 import { createTaskClearEvent } from "../utils/eventLogFactory.ts";
 import { saveLogEvent } from "../utils/logger.ts";
 import { TaskContext } from "../types/taskContext.ts";
+import { handleError } from "../utils/helpers.ts";
 
 export async function processClear(context: TaskContext): Promise<void> {
-  await clearTask(context).catch((err) => {
-    console.error("タスクの削除中にエラーが発生しました:", err);
-  });
+  await clearTask(context).catch(handleError("タスクの削除"));
 }
 
 export async function clearTask(

@@ -11,6 +11,7 @@ import { saveLogEvent } from "../utils/logger.ts";
 import { saveTimeLog } from "../utils/timeLogger.ts";
 import { findTaskById } from "../utils/taskUtils.ts";
 import { createStartEvent } from "../utils/timeLogFactory.ts";
+import { handleError } from "../utils/helpers.ts";
 
 export async function processStart(
   args: Args,
@@ -22,9 +23,7 @@ export async function processStart(
     return;
   }
 
-  await startTask(taskId, context).catch((err) => {
-    console.error("タスク開始中にエラーが発生しました:", err);
-  });
+  await startTask(taskId, context).catch(handleError("タスク測定開始"));
 }
 
 export async function startTask(

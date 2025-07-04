@@ -3,7 +3,7 @@ import { Args } from "../types/args.ts";
 import { Task } from "../types/task.ts";
 import { readTasksFromFile } from "../utils/file.ts";
 import { getActualMinutes } from "../utils/timeCalc.ts";
-import { isOptionEnabled } from "../utils/option.ts";
+import { handleError, isOptionEnabled } from "../utils/helpers.ts";
 import stringWidth from "https://esm.sh/string-width@7.2.0?dts";
 import { TaskContext } from "../types/taskContext.ts";
 
@@ -37,9 +37,7 @@ export async function processList(
     isOvertime,
     title: args.title as string | undefined,
     plannedMinutes: args.plannedMinutes as number | undefined,
-  }).catch((err) => {
-    console.error("タスク一覧取得中にエラーが発生しました:", err);
-  });
+  }).catch(handleError("タスクの一覧取得"));
 }
 
 export async function listTasks(

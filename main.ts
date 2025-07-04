@@ -15,7 +15,7 @@ import {
 import { Command } from "./commands/commands.ts";
 import { Args } from "./types/args.ts";
 import { TaskContext } from "./types/taskContext.ts";
-import { isOptionEnabled } from "./utils/option.ts";
+import { isOptionEnabled } from "./utils/helpers.ts";
 
 export async function main(args: Args): Promise<number> {
   const command = typeof args._[0] === "string"

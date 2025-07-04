@@ -6,6 +6,7 @@ import { createTask } from "../utils/taskFactory.ts";
 import { createTaskAddEvent } from "../utils/eventLogFactory.ts";
 import { saveLogEvent } from "../utils/logger.ts";
 import { defaultDataFileContent } from "../utils/const.ts";
+import { handleError } from "../utils/helpers.ts";
 
 export async function processAdd(
   args: Args,
@@ -29,9 +30,7 @@ export async function processAdd(
     title,
     plannedMinutes,
     context,
-  ).catch((err) => {
-    console.error("タスク追加中にエラーが発生しました:", err);
-  });
+  ).catch(handleError("タスク追加"));
 }
 
 export async function addTask(
