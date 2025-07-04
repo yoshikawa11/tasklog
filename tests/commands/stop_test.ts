@@ -29,13 +29,13 @@ Deno.test("stopTask: start→stopでタイムログとイベントログが記�
     }) + "\n",
   );
 
+  const context = {
+    dataFilePath: testDataFilePath,
+    eventLogPath: testEventLogFilePath,
+    timeLogPath: testTimeLogFilePath,
+  };
   // テスト実行
-  await stopTask(
-    task.id,
-    testDataFilePath,
-    testEventLogFilePath,
-    testTimeLogFilePath,
-  );
+  await stopTask(task.id, context);
 
   // タイムログにstopイベントが追加されていることを確認
   const timeLogContent = await Deno.readTextFile(testTimeLogFilePath);

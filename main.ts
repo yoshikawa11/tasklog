@@ -3,7 +3,7 @@ import { processAdd } from "./commands/add.ts";
 import { processDone } from "./commands/done.ts";
 import { processList } from "./commands/list.ts";
 import { processStart } from "./commands/start.ts";
-import { stopTask } from "./commands/stop.ts";
+import { processStop } from "./commands/stop.ts";
 import { deleteTask } from "./commands/delete.ts";
 import { clearTask } from "./commands/clear.ts";
 import {
@@ -55,14 +55,7 @@ export async function main(args: Args): Promise<number> {
       return 0;
     }
     case Command.Stop: {
-      await stopTask(
-        String(args._[1]),
-        dataFilePath,
-        eventLogPath,
-        timeLogPath,
-      ).catch((err) => {
-        console.error("タスク開始中にエラーが発生しました:", err);
-      });
+      await processStop(args, context);
       return 0;
     }
     case Command.Delete: {
