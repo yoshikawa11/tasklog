@@ -2,6 +2,7 @@ import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { deleteTask } from "../../commands/delete.ts";
 import { readTasksFromFile, writeTasksToFile } from "../../utils/file.ts";
 import { Task } from "../../types/task.ts";
+import { TaskContext } from "../../types/taskContext.ts";
 
 const testDataFilePath = "./tests/commands/test_tasks.json";
 const testEventLogFilePath = "./tests/commands/test_eventlog.jsonl";
@@ -28,8 +29,14 @@ Deno.test("deleteTask: 指定したタスクが削除される", async () => {
   ];
   await writeTasksToFile(testDataFilePath, tasks, "[]");
 
+  const context: TaskContext = {
+    dataFilePath: testDataFilePath,
+    eventLogPath: testEventLogFilePath,
+    timeLogPath: "",
+  };
+
   // テスト実行
-  await deleteTask("test-id-1", testDataFilePath, testEventLogFilePath);
+  await deleteTask("test-id-1", context);
 
   // 検証: タスクが1件だけ残っている
   const result = await readTasksFromFile(testDataFilePath);

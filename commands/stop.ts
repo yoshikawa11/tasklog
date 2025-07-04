@@ -21,7 +21,9 @@ export async function processStop(
     console.error("タスクIDを指定してください");
     return;
   }
-  await stopTask(taskId, context);
+  await stopTask(taskId, context).catch((err) => {
+    console.error("タスク停止中にエラーが発生しました:", err);
+  });
 }
 
 export async function stopTask(

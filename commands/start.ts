@@ -22,7 +22,9 @@ export async function processStart(
     return;
   }
 
-  await startTask(taskId, context);
+  await startTask(taskId, context).catch((err) => {
+    console.error("タスク開始中にエラーが発生しました:", err);
+  });
 }
 
 export async function startTask(

@@ -7,21 +7,35 @@ import { findTaskById } from "../utils/taskUtils.ts";
 import { createTaskDeleteEvent } from "../utils/eventLogFactory.ts";
 import { saveLogEvent } from "../utils/logger.ts";
 import { Task } from "../types/task.ts";
+import { Args } from "../types/args.ts";
+import { TaskContext } from "../types/taskContext.ts";
+
+export async function processDelete(
+  args: Args,
+  context: TaskContext,
+): Promise<void> {
+  const taskId = String(args._[1]);
+  if (!taskId) {
+    console.error("タスクIDを指定してください");
+    return;
+  }
+
+  await deleteTask(taskId, context);
+}
 
 export async function deleteTask(
   taskId: string,
-  dataFilePath: string,
-  eventLogPath: string,
+  context: TaskContext,
 ): Promise<void> {
-  await ensureDataFile(dataFilePath, "[]");
+  await ensureDataFile(context.dataFilePath, "[]");
 
-  const tasks: Task[] = await readTasksFromFile(dataFilePath);
+  const tasks: Task[] = await readTasksFromFile(context.dataFilePath);
   const task = findTaskById(tasks, taskId);
   if (!task) return;
 
   const updatedTasks = tasks.filter((t) => t.id !== task.id);
-  await writeTasksToFile(dataFilePath, updatedTasks, "[]");
+  await writeTasksToFile(context.dataFilePath, updatedTasks, "[]");
 
   const event = createTaskDeleteEvent(task);
-  await saveLogEvent(eventLogPath, event);
+  await saveLogEvent(context.eventLogPath, event);
 }

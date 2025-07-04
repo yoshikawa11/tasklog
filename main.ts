@@ -4,8 +4,8 @@ import { processDone } from "./commands/done.ts";
 import { processList } from "./commands/list.ts";
 import { processStart } from "./commands/start.ts";
 import { processStop } from "./commands/stop.ts";
-import { deleteTask } from "./commands/delete.ts";
-import { clearTask } from "./commands/clear.ts";
+import { processDelete } from "./commands/delete.ts";
+import { processClear } from "./commands/clear.ts";
 import {
   dataFilePath,
   eventLogPath,
@@ -15,6 +15,7 @@ import {
 import { Command } from "./commands/commands.ts";
 import { Args } from "./types/args.ts";
 import { TaskContext } from "./types/taskContext.ts";
+import { isOptionEnabled } from "./utils/option.ts";
 
 export async function main(args: Args): Promise<number> {
   const command = typeof args._[0] === "string"
@@ -59,19 +60,11 @@ export async function main(args: Args): Promise<number> {
       return 0;
     }
     case Command.Delete: {
-      await deleteTask(
-        String(args._[1]),
-        dataFilePath,
-        eventLogPath,
-      ).catch((err) => {
-        console.error("タスク削除中にエラーが発生しました:", err);
-      });
+      await processDelete(args, context);
       return 0;
     }
     case Command.Clear: {
-      await clearTask(dataFilePath, eventLogPath).catch((err) => {
-        console.error("タスククリア中にエラーが発生しました:", err);
-      });
+      await processClear(context);
       return 0;
     }
 
@@ -99,10 +92,6 @@ if (import.meta.main) {
     return 1;
   });
   Deno.exit(code);
-}
-
-export function isOptionEnabled(val: unknown): boolean {
-  return val === true || val === "true" || val === "";
 }
 
 export function showHelp(): void {

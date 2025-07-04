@@ -3,7 +3,7 @@ import { Args } from "../types/args.ts";
 import { Task } from "../types/task.ts";
 import { readTasksFromFile } from "../utils/file.ts";
 import { getActualMinutes } from "../utils/timeCalc.ts";
-import { isOptionEnabled } from "../main.ts";
+import { isOptionEnabled } from "../utils/option.ts";
 import stringWidth from "https://esm.sh/string-width@7.2.0?dts";
 import { TaskContext } from "../types/taskContext.ts";
 

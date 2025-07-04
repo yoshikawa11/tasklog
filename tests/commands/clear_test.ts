@@ -1,6 +1,7 @@
 import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { clearTask } from "../../commands/clear.ts";
 import { readTasksFromFile, writeTasksToFile } from "../../utils/file.ts";
+import { TaskContext } from "../../types/taskContext.ts";
 
 const testDataFilePath = "./tests/commands/test_tasks.json";
 const testEventLogFilePath = "./tests/commands/test_eventlog.jsonl";
@@ -18,8 +19,13 @@ Deno.test("clearTask: タスクファイルが初期化され、イベントロ�
     },
   ], "[]");
 
+  const context: TaskContext = {
+    dataFilePath: testDataFilePath,
+    eventLogPath: testEventLogFilePath,
+    timeLogPath: "",
+  };
   // テスト実行
-  await clearTask(testDataFilePath, testEventLogFilePath);
+  await clearTask(context);
 
   // タスクファイルが空配列になっていることを確認
   const tasks = await readTasksFromFile(testDataFilePath);
