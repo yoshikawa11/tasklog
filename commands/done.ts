@@ -1,21 +1,39 @@
 import { readTasksFromFile, writeTasksToFile } from "../utils/file.ts";
 import { Task } from "../types/task.ts";
+import { Args } from "../types/args.ts";
+import { TaskContext } from "../types/taskContext.ts";
 import { createTaskDoneEvent } from "../utils/eventLogFactory.ts";
 import { saveLogEvent } from "../utils/logger.ts";
 import { findTaskById } from "../utils/taskUtils.ts";
 import { getActualMinutes } from "../utils/timeCalc.ts";
 
+export async function processDone(
+  args: Args,
+  context: TaskContext,
+): Promise<void> {
+  const taskId = String(args._[1]);
+  if (!taskId) {
+    console.error("タスクIDを指定してください");
+    return;
+  }
+
+  await doneTask(
+    taskId,
+    context,
+  ).catch((err) => {
+    console.error("タスク完了中にエラーが発生しました:", err);
+  });
+}
+
 export async function doneTask(
   taskId: string,
-  dataFilePath: string,
-  eventLogPath: string,
-  timeLogPath: string,
+  context: TaskContext,
 ): Promise<void> {
-  const tasks: Task[] = await readTasksFromFile(dataFilePath);
+  const tasks: Task[] = await readTasksFromFile(context.dataFilePath);
   const task = findTaskById(tasks, taskId);
   if (!task) return;
 
-  const actualMinutes = await getActualMinutes(task.id, timeLogPath);
+  const actualMinutes = await getActualMinutes(task.id, context.timeLogPath);
 
   // taskの変更点をtasksにも反映
   const updatedTasks = tasks.map((t) =>
@@ -23,12 +41,12 @@ export async function doneTask(
       ? { ...t, status: "completed" as Task["status"], actualMinutes }
       : t
   );
-  await writeTasksToFile(dataFilePath, updatedTasks, "[]");
+  await writeTasksToFile(context.dataFilePath, updatedTasks, "[]");
 
   const event = createTaskDoneEvent({
     ...task,
     status: "completed",
     actualMinutes,
   });
-  await saveLogEvent(eventLogPath, event);
+  await saveLogEvent(context.eventLogPath, event);
 }

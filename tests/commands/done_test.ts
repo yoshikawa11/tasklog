@@ -30,12 +30,7 @@ Deno.test("done: タスクが正常に完了する", async () => {
   const tasks: Task[] = JSON.parse(data);
   const taskId = tasks[0].id;
 
-  await doneTask(
-    taskId,
-    testDataFilePath,
-    testEventLogFilePath,
-    testTimeLogFilePath,
-  );
+  await doneTask(taskId, context);
 
   const data2 = await Deno.readTextFile(testDataFilePath);
   const updateTasks: Task[] = JSON.parse(data2);

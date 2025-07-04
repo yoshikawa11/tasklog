@@ -1,6 +1,6 @@
 import { parseArgs } from "jsr:@std/cli/parse-args";
 import { processAdd } from "./commands/add.ts";
-import { doneTask } from "./commands/done.ts";
+import { processDone } from "./commands/done.ts";
 import { processList } from "./commands/list.ts";
 import { startTask } from "./commands/start.ts";
 import { stopTask } from "./commands/stop.ts";
@@ -47,14 +47,7 @@ export async function main(args: Args): Promise<number> {
       return 0;
     }
     case Command.Done: {
-      await doneTask(
-        String(args._[1]),
-        dataFilePath,
-        eventLogPath,
-        timeLogPath,
-      ).catch((err) => {
-        console.error("タスク完了中にエラーが発生しました:", err);
-      });
+      await processDone(args, context);
       return 0;
     }
     case Command.Start: {
