@@ -10,14 +10,16 @@ import { Task } from "../types/task.ts";
 import { Args } from "../types/args.ts";
 import { TaskContext } from "../types/taskContext.ts";
 import { handleError } from "../utils/helpers.ts";
+import { validateTaskId } from "../utils/validation.ts";
 
 export async function processDelete(
   args: Args,
   context: TaskContext,
 ): Promise<void> {
   const taskId = String(args._[1]);
-  if (!taskId) {
-    console.error("タスクIDを指定してください");
+  const error = validateTaskId(taskId);
+  if (error) {
+    console.error(error);
     return;
   }
 

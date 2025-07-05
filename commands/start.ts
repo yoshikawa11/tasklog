@@ -12,14 +12,16 @@ import { saveTimeLog } from "../utils/timeLogger.ts";
 import { findTaskById } from "../utils/taskUtils.ts";
 import { createStartEvent } from "../utils/timeLogFactory.ts";
 import { handleError } from "../utils/helpers.ts";
+import { validateTaskId } from "../utils/validation.ts";
 
 export async function processStart(
   args: Args,
   context: TaskContext,
 ): Promise<void> {
   const taskId = String(args._[1]);
-  if (!taskId) {
-    console.error("タスクIDを指定してください");
+  const error = validateTaskId(taskId);
+  if (error) {
+    console.error(error);
     return;
   }
 

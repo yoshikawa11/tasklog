@@ -7,14 +7,16 @@ import { saveLogEvent } from "../utils/logger.ts";
 import { findTaskById } from "../utils/taskUtils.ts";
 import { getActualMinutes } from "../utils/timeCalc.ts";
 import { handleError } from "../utils/helpers.ts";
+import { validateTaskId } from "../utils/validation.ts";
 
 export async function processDone(
   args: Args,
   context: TaskContext,
 ): Promise<void> {
   const taskId = String(args._[1]);
-  if (!taskId) {
-    console.error("タスクIDを指定してください");
+  const error = validateTaskId(taskId);
+  if (error) {
+    console.error(error);
     return;
   }
 

@@ -7,6 +7,7 @@ import { createTaskAddEvent } from "../utils/eventLogFactory.ts";
 import { saveLogEvent } from "../utils/logger.ts";
 import { defaultDataFileContent } from "../utils/const.ts";
 import { handleError } from "../utils/helpers.ts";
+import { validatePlannedMinutes, validateTitle } from "../utils/validation.ts";
 
 export async function processAdd(
   args: Args,
@@ -15,15 +16,15 @@ export async function processAdd(
   const title = String(args._[1]);
   const plannedMinutes = args._[2] ? Number(args._[2]) : null;
 
-  if (!title) {
-    console.error("タイトルを指定してください");
-    Deno.exit(1);
+  const titleError = validateTitle(title);
+  if (titleError) {
+    console.error(titleError);
+    return;
   }
-  if (
-    plannedMinutes !== null && isNaN(plannedMinutes) && plannedMinutes <= 0
-  ) {
-    console.error("予定時間は数値で指定してください");
-    Deno.exit(1);
+  const plannedMinutesError = validatePlannedMinutes(plannedMinutes);
+  if (plannedMinutesError) {
+    console.error(plannedMinutesError);
+    return;
   }
 
   await addTask(
