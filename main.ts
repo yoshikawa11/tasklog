@@ -95,16 +95,20 @@ if (import.meta.main) {
 }
 
 export function showHelp(): void {
+  const commandDescriptions = [
+    "- add <タイトル> <予定時間> タスクを追加します",
+    "- list [--status=pending|in_progress|completed] [--overtime] [--title=タイトル] [--plannedMinutes=時間] タスクを一覧表示します。オプションで絞り込みが可能です",
+    "- done <タスクID> タスクを完了します",
+    "- start <タスクID> タスクにかかる時間の計測を開始します",
+    "- stop <タスクID> タスクの時間の計測を停止します",
+    "- delete <タスクID> タスクを削除します",
+    "- clear タスクを全てクリアします",
+  ];
+
   console.log(`
 TaskLog CLI - タスクを管理しタスクにかかる時間を記録するツール
 バージョン: ${version}
 使用可能なコマンド:
-  - add <タイトル> <予定時間> タスクを追加します
-  - list [--status=pending|in_progress|completed] [--overtime] [--title=タイトル] [--plannedMinutes=時間] タスクを一覧表示します。オプションで絞り込みが可能です
-  - done <タスクID> タスクを完了します
-  - start <タスクID> タスクにかかる時間の計測を開始します
-  - stop <タスクID> タスクの時間の計測を停止します
-  - delete <タスクID> タスクを削除します
-  - clear タスクを全てクリアします
-  `);
+  ${commandDescriptions.join("\n  ")}
+`);
 }
