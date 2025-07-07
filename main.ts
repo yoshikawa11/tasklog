@@ -40,32 +40,25 @@ export async function main(args: Args): Promise<number> {
 
   switch (command) {
     case Command.Add: {
-      await processAdd(args, context);
-      return 0;
+      return await processAdd(args, context);
     }
     case Command.List: {
-      await processList(args, context);
-      return 0;
+      return await processList(args, context);
     }
     case Command.Done: {
-      await processDone(args, context);
-      return 0;
+      return await processDone(args, context);
     }
     case Command.Start: {
-      await processStart(args, context);
-      return 0;
+      return await processStart(args, context);
     }
     case Command.Stop: {
-      await processStop(args, context);
-      return 0;
+      return await processStop(args, context);
     }
     case Command.Delete: {
-      await processDelete(args, context);
-      return 0;
+      return await processDelete(args, context);
     }
     case Command.Clear: {
-      await processClear(context);
-      return 0;
+      return await processClear(context);
     }
 
     default: {

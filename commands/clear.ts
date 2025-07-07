@@ -4,8 +4,12 @@ import { saveLogEvent } from "../utils/logger.ts";
 import { TaskContext } from "../types/taskContext.ts";
 import { handleError } from "../utils/helpers.ts";
 
-export async function processClear(context: TaskContext): Promise<void> {
-  await clearTask(context).catch(handleError("タスクの削除"));
+export async function processClear(context: TaskContext): Promise<number> {
+  await clearTask(context).catch((err) => {
+    handleError("タスクの削除")(err);
+    return 1;
+  });
+  return 0;
 }
 
 export async function clearTask(

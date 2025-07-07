@@ -12,15 +12,20 @@ import { validateTaskId } from "../utils/validation.ts";
 export async function processDone(
   args: Args,
   context: TaskContext,
-): Promise<void> {
+): Promise<number> {
   const taskId = String(args._[1]);
   const error = validateTaskId(taskId);
   if (error) {
     console.error(error);
-    return;
+    return 1;
   }
 
-  await doneTask(taskId, context).catch(handleError("タスク完了"));
+  await doneTask(taskId, context).catch((err) => {
+    handleError("タスク完了")(err);
+    return 1;
+  });
+
+  return 0;
 }
 
 export async function doneTask(

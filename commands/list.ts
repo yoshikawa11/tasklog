@@ -28,7 +28,7 @@ function truncate(str: string, max: number): string {
 export async function processList(
   args: Args,
   context: TaskContext,
-): Promise<void> {
+): Promise<number> {
   const isOvertime = isOptionEnabled(args.isOvertime);
   await listTasks({
     dataFilePath: context.dataFilePath,
@@ -37,7 +37,12 @@ export async function processList(
     isOvertime,
     title: args.title as string | undefined,
     plannedMinutes: args.plannedMinutes as number | undefined,
-  }).catch(handleError("タスクの一覧取得"));
+  }).catch((err) => {
+    handleError("タスクの一覧取得")(err);
+    return 1;
+  });
+
+  return 0;
 }
 
 export async function listTasks(

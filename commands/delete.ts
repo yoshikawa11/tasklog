@@ -15,15 +15,20 @@ import { validateTaskId } from "../utils/validation.ts";
 export async function processDelete(
   args: Args,
   context: TaskContext,
-): Promise<void> {
+): Promise<number> {
   const taskId = String(args._[1]);
   const error = validateTaskId(taskId);
   if (error) {
     console.error(error);
-    return;
+    return 1;
   }
 
-  await deleteTask(taskId, context).catch(handleError("タスクの削除"));
+  await deleteTask(taskId, context).catch((err) => {
+    handleError("タスクの削除")(err);
+    return 1;
+  });
+
+  return 0;
 }
 
 export async function deleteTask(

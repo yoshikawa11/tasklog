@@ -12,26 +12,31 @@ import { validatePlannedMinutes, validateTitle } from "../utils/validation.ts";
 export async function processAdd(
   args: Args,
   context: TaskContext,
-): Promise<void> {
+): Promise<number> {
   const title = String(args._[1]);
   const plannedMinutes = args._[2] ? Number(args._[2]) : null;
 
   const titleError = validateTitle(title);
   if (titleError) {
     console.error(titleError);
-    return;
+    return 1;
   }
   const plannedMinutesError = validatePlannedMinutes(plannedMinutes);
   if (plannedMinutesError) {
     console.error(plannedMinutesError);
-    return;
+    return 1;
   }
 
   await addTask(
     title,
     plannedMinutes,
     context,
-  ).catch(handleError("タスク追加"));
+  ).catch((err) => {
+    handleError("タスク追加")(err);
+    return 1;
+  });
+
+  return 0;
 }
 
 export async function addTask(
